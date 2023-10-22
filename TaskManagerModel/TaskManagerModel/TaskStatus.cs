@@ -10,6 +10,7 @@ namespace TaskManagerModel
     {
         NotStarted,
         InProcess,
-        Done
+        Done,
+        Expired
     }
 }

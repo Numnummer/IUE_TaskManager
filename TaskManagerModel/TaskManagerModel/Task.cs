@@ -11,5 +11,10 @@ namespace TaskManagerModel
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset Deadline { get; set; }
         public TaskStatus Status { get; set; }
+        public Task(string? name) : base(name) { }
+        public Task(string? name, DateTimeOffset deadline) : base(name)
+        {
+            Deadline = deadline;
+        }
     }
 }

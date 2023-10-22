@@ -8,49 +8,105 @@ namespace TaskManagerModel
 {
     public class TaskController : ITaskController
     {
+        private readonly Dictionary<Guid, Task> _tasks = new Dictionary<Guid, Task>();
         public bool CreateTask(string name)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+            var task = new Task(name);
+            _tasks.Add(task.Id, task);
+            return true;
         }
 
         public bool CreateTask(string name, DateTimeOffset deadline)
         {
-            throw new NotImplementedException();
+            bool isArgsInvalid = string.IsNullOrWhiteSpace(name) ||
+                deadline <= DateTimeOffset.UtcNow;
+            if (isArgsInvalid)
+            {
+                return false;
+            }
+            var task = new Task(name, deadline);
+            _tasks.Add(task.Id, task);
+            return true;
         }
 
         public Task GetTaskById(Guid taskId)
         {
-            throw new NotImplementedException();
+            return _tasks[taskId];
+        }
+
+        public bool TryGetTaskById(Guid taskId, out Task? task)
+        {
+            return _tasks.TryGetValue(taskId, out task);
         }
 
         public bool RemoveTaskById(Guid taskId)
         {
-            throw new NotImplementedException();
+            return _tasks.Remove(taskId);
         }
 
-        public bool SetTaskStatusById(Guid taskId, TaskStatus status)
+        private bool SetTaskStatusById(Guid taskId, TaskStatus status)
         {
-            throw new NotImplementedException();
+            if (_tasks.TryGetValue(taskId, out var task))
+            {
+                task.Status=status;
+                return true;
+            }
+            return false;
         }
 
         public bool SetTaskDeadlineById(Guid taskId, DateTimeOffset deadline)
         {
-            throw new NotImplementedException();
+            if (_tasks.TryGetValue(taskId, out var task) &&
+                deadline > DateTimeOffset.UtcNow)
+            {
+                task.Deadline=deadline;
+                return true;
+            }
+            return false;
         }
 
         public bool StartTaskById(Guid taskId)
         {
-            throw new NotImplementedException();
+            if (SetTaskStatusById(taskId, TaskStatus.InProcess))
+            {
+                var task = _tasks[taskId];
+                task.StartTime=DateTimeOffset.UtcNow;
+                return true;
+            }
+            return false;
         }
 
-        public void UpdateTaskById(Guid taskId)
+        public bool CompleteTaskById(Guid taskId)
         {
-            throw new NotImplementedException();
+            return SetTaskStatusById(taskId, TaskStatus.Done);
+        }
+
+        public bool UpdateTaskById(Guid taskId)
+        {
+            if (_tasks.TryGetValue(taskId, out var task))
+            {
+                if (task.Deadline<=DateTimeOffset.UtcNow)
+                {
+                    task.Status=TaskStatus.Expired;
+                }
+                return true;
+            }
+            return false;
         }
 
         public void UpdateAllTasks()
         {
-            throw new NotImplementedException();
+            foreach (var pair in _tasks)
+            {
+                if (pair.Value.Deadline<=DateTimeOffset.UtcNow)
+                {
+                    pair.Value.Status=TaskStatus.Expired;
+                }
+            }
         }
     }
 }
