@@ -1,0 +1,22 @@
+.loginForm{
+    text-align: center;
+    margin-top: 18%;
+}
+
+.formItem{
+    margin: 5%;
+    scale: 200%;
+}
+
+.labelText{
+    color: rgba(255, 255, 255, 0.911);
+    font-family: fantasy;
+}
+
+.inputText{
+    border-radius: 0.7vw;    
+}
+
+.inputText:hover{
+    box-shadow: 1vw 1vw 1vw rgba(0, 0, 0, 0.41);
+}

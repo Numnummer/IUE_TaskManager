@@ -1,5 +1,6 @@
 body{  
   background: radial-gradient(rgb(115, 0, 255), #00c3ff);
+  background-image: url('startPageBackgroundImage.jpg');
 }
 h1{
   text-align: center;
