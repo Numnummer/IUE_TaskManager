@@ -9,18 +9,8 @@ namespace TaskManagerModel
     public class TaskController : ITaskController
     {
         private readonly Dictionary<Guid, Task> _tasks = new Dictionary<Guid, Task>();
-        public bool CreateTask(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return false;
-            }
-            var task = new Task(name);
-            _tasks.Add(task.Id, task);
-            return true;
-        }
 
-        public bool CreateTask(string name, DateTimeOffset deadline)
+        public bool CreateTask(string name, DateTimeOffset deadline, uint priority)
         {
             bool isArgsInvalid = string.IsNullOrWhiteSpace(name) ||
                 deadline <= DateTimeOffset.UtcNow;
@@ -28,7 +18,7 @@ namespace TaskManagerModel
             {
                 return false;
             }
-            var task = new Task(name, deadline);
+            var task = new Task(name, deadline, priority);
             _tasks.Add(task.Id, task);
             return true;
         }
@@ -64,6 +54,16 @@ namespace TaskManagerModel
                 deadline > DateTimeOffset.UtcNow)
             {
                 task.Deadline=deadline;
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetTaskPriorityById(Guid taskId, uint priority)
+        {
+            if (_tasks.TryGetValue(taskId, out var task))
+            {
+                task.Priority=priority;
                 return true;
             }
             return false;
