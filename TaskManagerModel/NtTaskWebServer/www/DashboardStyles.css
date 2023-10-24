@@ -1,0 +1,40 @@
+.board {
+    display: flex;
+    justify-content: space-between;
+    margin: 2%;
+}
+
+.column{
+    border-style: solid;
+    background-color: rgba(0, 0, 0, 0.301);
+    width: 22vw;
+}
+
+.columnHeader{
+    background-color: rgba(255, 255, 255, 0.301);
+    font-size: 1.5vw;
+    text-align: center;
+}
+
+.card{
+    margin: 5%;
+    background-color: white;
+    padding: 3%;
+    font-size: 2vw;
+    width: 18.5vw;
+}
+
+.date{
+    
+    margin: 1%;
+    border-style: dotted;
+    width: 18vw;
+    font-size: 1.3vw;
+}
+
+.cardName{
+    text-align: center;
+    border-style: dotted;
+    margin: 1%;
+    width: 18vw;
+}
