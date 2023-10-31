@@ -19,7 +19,7 @@ namespace NtTaskWebServer.Framework
             while (!cancellationToken.IsCancellationRequested)
             {
                 var context = await _listener.GetContextAsync();
-
+                await Router.RouteAsync(context);
             }
             _listener.Close();
         }
