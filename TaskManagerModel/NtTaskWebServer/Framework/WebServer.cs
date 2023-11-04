@@ -10,16 +10,18 @@ namespace NtTaskWebServer.Framework
     public class WebServer
     {
         private readonly HttpListener _listener = new();
-
+        public bool IsServerWork => _listener.IsListening;
 
         public async Task ListenAsync(string prefix, CancellationToken cancellationToken)
         {
             _listener.Prefixes.Add(prefix);
             _listener.Start();
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 var context = await _listener.GetContextAsync();
                 await Router.RouteAsync(context);
+                Console.WriteLine(cancellationToken.IsCancellationRequested);
             }
             _listener.Close();
         }
