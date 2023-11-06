@@ -25,5 +25,13 @@ namespace NtTaskWebServer.Framework
             context.Response.ContentType=view.ContentType;
             await stream.WriteAsync(buffer);
         }
+
+        public static async Task SendOkAsync(HttpListenerContext context, string message)
+        {
+            context.Response.StatusCode=200;
+            using var stream = context.Response.OutputStream;
+            var bytes = Encoding.UTF8.GetBytes(message);
+            await stream.WriteAsync(bytes, 0, bytes.Length);
+        }
     }
 }

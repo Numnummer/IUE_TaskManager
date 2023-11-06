@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace NtTaskWebServer.Framework
 {
-    public class DatabaseContext
+    public abstract class DatabaseContext
     {
+        protected readonly string _connectionString;
+        public DatabaseContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
     }
 }
