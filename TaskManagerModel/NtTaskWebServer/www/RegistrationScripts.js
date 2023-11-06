@@ -18,6 +18,9 @@ function registrate() {
         if(response=="User accepted"){
             window.location="Dashboard";
         }
+        else{
+            document.getElementById("errorLabel").innerHTML=response;
+        }
         console.log(response);
     },
     error: function(xhr, status, error) {

@@ -15,7 +15,8 @@ namespace NtTaskWebServer.Framework
 
         public async Task<bool> WriteLoginDataAsync(LoginData loginData)
         {
-            if (loginData==null || !ValidationHelper.IsValidLoginData(loginData))
+            if (loginData==null || !ValidationHelper.IsValidLoginData(loginData)
+                || await IsExistUserNameAsync(loginData.UserName))
             {
                 return false;
             }
@@ -27,6 +28,16 @@ namespace NtTaskWebServer.Framework
             using var command = new NpgsqlCommand(commandText, connection);
             var updated = await command.ExecuteNonQueryAsync();
             return updated>0;
+        }
+
+        public async Task<bool> IsExistUserNameAsync(string userName)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var commandText = $"select * from userdata where name='{userName}'";
+            using var command = new NpgsqlCommand(commandText, connection);
+            var updated = await command.ExecuteScalarAsync();
+            return updated!=null;
         }
     }
 }

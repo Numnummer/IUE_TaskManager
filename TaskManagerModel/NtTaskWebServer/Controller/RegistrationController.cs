@@ -31,7 +31,7 @@ namespace NtTaskWebServer.Controller
             }
             else
             {
-                await WebHelper.Send400Async(context, "Failed");
+                await WebHelper.SendOkAsync(context, "Failed");
             }
         }
     }
