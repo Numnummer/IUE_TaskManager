@@ -15,6 +15,10 @@ namespace NtTaskWebServer.Framework
         public static async Task RouteAsync(HttpListenerContext context)
         {
             var rawUrlName = context.Request.RawUrl.Trim('/');
+            if (rawUrlName==string.Empty)
+            {
+                rawUrlName=GetRawUrl(context);
+            }
             if (rawUrlName[..3]=="www")
             {
                 await RouteWwwAsync(context, rawUrlName);
@@ -29,6 +33,17 @@ namespace NtTaskWebServer.Framework
             var controllerType = Type.GetType(controllerName);
 
             await CallController(controllerType, methodName, context);
+        }
+
+        private static string GetRawUrl(HttpListenerContext context)
+        {
+            var cookies = context.Request.Cookies;
+            var session = cookies["session"]?.Value;
+            if (session==null || !SessionHelper.IsSessionExist(session, cookies))
+            {
+                return "StartPage";
+            }
+            return "Dashboard";
         }
 
         private static async Task CallController(Type controllerType, string methodName, HttpListenerContext context)

@@ -33,5 +33,11 @@ namespace NtTaskWebServer.Framework
             var bytes = Encoding.UTF8.GetBytes(message);
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
+
+        public static void SendSessionAsync(HttpListenerContext context, string userName)
+        {
+            var cookie = SessionHelper.GetSessionCookie(userName);
+            context.Response.Cookies.Add(cookie);
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace NtTaskWebServer.Framework
         public async Task ListenAsync(string prefix, CancellationToken cancellationToken)
         {
             _listener.Prefixes.Add(prefix);
+
             _listener.Start();
 
             while (!cancellationToken.IsCancellationRequested)
