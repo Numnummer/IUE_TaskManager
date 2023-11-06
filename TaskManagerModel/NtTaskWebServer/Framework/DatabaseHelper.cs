@@ -14,5 +14,10 @@ namespace NtTaskWebServer.Framework
         {
             return await databaseContext.WriteLoginDataAsync(loginData);
         }
+
+        public static async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
+        {
+            return await databaseContext.IsLoginDataExistAsync(loginData);
+        }
     }
 }

@@ -21,23 +21,46 @@ namespace NtTaskWebServer.Framework
                 return false;
             }
             var hashedPassword = CryptoHelper.HashString(loginData.Password);
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
             var commandText = "insert into userdata(name,email,login,password) " +
                 $"values('{loginData.UserName}','{loginData.Email}','{loginData.Login}','{hashedPassword}')";
-            using var command = new NpgsqlCommand(commandText, connection);
-            var updated = await command.ExecuteNonQueryAsync();
+            var updated = await ExecuteNonQueryAsync(commandText);
             return updated>0;
         }
 
         public async Task<bool> IsExistUserNameAsync(string userName)
         {
+            var commandText = $"select * from userdata where name='{userName}'";
+            var updated = await ExecuteScalarAsync(commandText);
+            return updated!=null;
+        }
+
+        public async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
+        {
+            if (loginData==null || !ValidationHelper.IsValidLoginDataForEnter(loginData)
+                || !await IsExistUserNameAsync(loginData.UserName))
+            {
+                return false;
+            }
+            var hashedPassword = CryptoHelper.HashString(loginData.Password);
+            var commandText = $"select * from userdata where " +
+                $"name='{loginData.UserName}' and password='{hashedPassword}'";
+            var updated = await ExecuteScalarAsync(commandText);
+            return updated!=null;
+        }
+
+        private async Task<object?> ExecuteScalarAsync(string commandText)
+        {
             using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-            var commandText = $"select * from userdata where name='{userName}'";
             using var command = new NpgsqlCommand(commandText, connection);
-            var updated = await command.ExecuteScalarAsync();
-            return updated!=null;
+            return await command.ExecuteScalarAsync();
+        }
+        private async Task<int> ExecuteNonQueryAsync(string commandText)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var command = new NpgsqlCommand(commandText, connection);
+            return await command.ExecuteNonQueryAsync();
         }
     }
 }

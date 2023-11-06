@@ -12,8 +12,8 @@
 <body>
     <form class="loginForm">
         <div class="formItem">
-            <label class="labelText">Логин</label>
-            <input class="inputText" type="text" id="Login" />
+            <label class="labelText">Имя пользователя</label>
+            <input class="inputText" type="text" id="UserName" />
         </div>
 
         <div class="formItem">
@@ -21,9 +21,13 @@
             <input class="inputText" type="password" id="Password" />
         </div>
 
-        <button type="button" class="classicButton" onclick="registrate()">Войти</button>
+        <button type="button" class="classicButton" onclick="enter()">Войти</button>
+        <br />
+        <label id="errorLabel"></label>
     </form>
 
 </body>
 
 </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="www/LogInScripts.js"></script>
