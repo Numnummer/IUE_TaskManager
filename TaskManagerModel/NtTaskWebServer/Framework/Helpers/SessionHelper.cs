@@ -5,13 +5,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Framework
+namespace NtTaskWebServer.Framework.Helpers
 {
     public static class SessionHelper
     {
         private static readonly Dictionary<string, Guid> _sessions = new();
         internal static Dictionary<string, Guid> Sessions => _sessions;
-        public const byte CookieLifetimeMinutes = 2;
+        public const byte CookieLifetimeMinutes = 30;
         public static bool IsSessionExist(string session, CookieCollection cookies)
         {
             var splitSession = session.Split(' ');
@@ -19,7 +19,7 @@ namespace NtTaskWebServer.Framework
             var userName = splitSession[1];
             if (_sessions.TryGetValue(userName, out var actualSessionId))
             {
-                if (sessionId==actualSessionId)
+                if (sessionId == actualSessionId)
                 {
                     return true;
                 }
@@ -32,9 +32,9 @@ namespace NtTaskWebServer.Framework
             _sessions.Add(userName, sessionId);
             return new Cookie()
             {
-                Name="session",
-                Value=sessionId.ToString()+' '+userName,
-                Expires=DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
+                Name = "session",
+                Value = sessionId.ToString() + ' ' + userName,
+                Expires = DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
             };
         }
     }

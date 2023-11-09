@@ -1,4 +1,5 @@
 ﻿using NtTaskWebServer.Controller;
+using NtTaskWebServer.Framework.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -19,17 +20,32 @@ namespace NtTaskWebServer.Framework
             {
                 rawUrlName=GetRawUrl(context);
             }
+            string actionUrl;
+            string controllerUrl;
+            var urlNames = rawUrlName.Split('/');
+            if (urlNames.Length==1)
+            {
+                actionUrl=controllerUrl=rawUrlName;
+            }
+            else
+            {
+                controllerUrl=urlNames[0];
+                actionUrl=urlNames[1];
+            }
             if (rawUrlName[..3]=="www")
             {
                 await RouteWwwAsync(context, rawUrlName);
             }
-
-            var methodName = "Get" + rawUrlName + "Async";
+            await RouteRequests(context, controllerUrl, actionUrl);
+        }
+        private static async Task RouteRequests(HttpListenerContext context, string controllerUrl, string actionUrl)
+        {
+            var methodName = "Get" + actionUrl + "Async";
             if (context.Request.HttpMethod=="POST")
             {
-                methodName = "Post" + rawUrlName + "Async";
+                methodName = "Post" + actionUrl + "Async";
             }
-            var controllerName = "NtTaskWebServer.Controller." + rawUrlName + "Controller";
+            var controllerName = "NtTaskWebServer.Controller." + controllerUrl + "Controller";
             var controllerType = Type.GetType(controllerName);
 
             await CallController(controllerType, methodName, context);

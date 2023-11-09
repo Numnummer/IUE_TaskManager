@@ -6,23 +6,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Framework
+namespace NtTaskWebServer.Framework.Helpers
 {
     public static class ValidationHelper
     {
         public static bool IsValidLoginData(LoginData loginData)
         {
-            var isUserNameValid = loginData.UserName!=string.Empty;
+            var isUserNameValid = loginData.UserName != string.Empty;
             var isEmailValid = IsValidEmail(loginData.Email);
-            var isLoginValid = loginData.Login!=string.Empty;
-            var isPasswordValid = loginData.Password.Length>=4;
+            var isLoginValid = loginData.Login != string.Empty;
+            var isPasswordValid = loginData.Password.Length >= 4;
             return isUserNameValid && isEmailValid && isLoginValid && isPasswordValid;
         }
 
         public static bool IsValidLoginDataForEnter(LoginData loginData)
         {
-            var isUserNameValid = loginData.UserName!=string.Empty;
-            var isPasswordValid = loginData.Password.Length>=4;
+            var isUserNameValid = loginData.UserName != string.Empty;
+            var isPasswordValid = loginData.Password.Length >= 4;
             return isUserNameValid && isPasswordValid;
         }
 

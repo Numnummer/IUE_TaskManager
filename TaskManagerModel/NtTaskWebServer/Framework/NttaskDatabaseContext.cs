@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,25 @@ namespace NtTaskWebServer.Framework
             await connection.OpenAsync();
             using var command = new NpgsqlCommand(commandText, connection);
             return await command.ExecuteNonQueryAsync();
+        }
+
+        private async Task<NpgsqlDataReader> ExecuteReaderAsync(NpgsqlConnection connection, string commandText)
+        {
+            //using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var command = new NpgsqlCommand(commandText, connection);
+            return await command.ExecuteReaderAsync();
+        }
+
+        public async Task<LoginData> GetUserDataAsync(string name)
+        {
+            var commandText = "select * from userdata " +
+                $"where name='{name}'";
+            using var connection = new NpgsqlConnection(_connectionString);
+
+            var reader = await ExecuteReaderAsync(connection, commandText);
+
+            return await LoginDataBuilder.BuildLoginDataByDataReaderAsync(reader);
         }
     }
 }

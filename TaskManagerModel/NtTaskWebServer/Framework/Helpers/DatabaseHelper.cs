@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Framework
+namespace NtTaskWebServer.Framework.Helpers
 {
     public static class DatabaseHelper
     {
@@ -18,6 +18,11 @@ namespace NtTaskWebServer.Framework
         public static async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
         {
             return await databaseContext.IsLoginDataExistAsync(loginData);
+        }
+
+        public static async Task<LoginData> GetUserDataAsync(string name)
+        {
+            return await databaseContext.GetUserDataAsync(name);
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using MyWebFramework;
-using NtTaskWebServer.Framework;
+using NtTaskWebServer.Framework.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace NtTaskWebServer.Controller
@@ -14,7 +15,20 @@ namespace NtTaskWebServer.Controller
         public async Task GetUserProfileAsync(HttpListenerContext context)
         {
             var view = new View("View/UserProfile.htm", "text/html");
+
             await WebHelper.SendViewAsync(context, view);
+        }
+        public async Task GetUserDataAsync(HttpListenerContext context)
+        {
+            var cookie = context.Request.Cookies["session"];
+            if (cookie == null)
+            {
+                WebHelper.Send401(context);
+                return;
+            }
+            var userData = await DatabaseHelper.GetUserDataAsync(cookie.Value.Split(' ')[1]);
+            var response = JsonSerializer.Serialize(userData);
+            await WebHelper.SendOkAsync(context, response);
         }
     }
 }
