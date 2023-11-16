@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,7 +67,6 @@ namespace NtTaskWebServer.Framework
 
         private async Task<NpgsqlDataReader> ExecuteReaderAsync(NpgsqlConnection connection, string commandText)
         {
-            //using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             using var command = new NpgsqlCommand(commandText, connection);
             return await command.ExecuteReaderAsync();
@@ -81,6 +81,14 @@ namespace NtTaskWebServer.Framework
             var reader = await ExecuteReaderAsync(connection, commandText);
 
             return await LoginDataBuilder.BuildLoginDataByDataReaderAsync(reader);
+        }
+
+        public async Task<bool> WriteRoleAsync(string url, string userName, Role role)
+        {
+            var commandText = "insert into roles(url,user_name,role)" +
+                $"values ('{url}','{userName}','{role}')";
+            var result = await ExecuteNonQueryAsync(commandText);
+            return result>0;
         }
     }
 }

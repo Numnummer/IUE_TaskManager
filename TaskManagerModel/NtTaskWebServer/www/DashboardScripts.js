@@ -9,3 +9,14 @@ function ToProfile(){
         // Обрабатывайте ошибку...
     });    
 }
+
+function ExitFromAccount(){
+    $.post('Dashboard/ExitFromAccount', function(response) {
+        if (response=="ok"){
+            window.location="StartPage";  
+        }             
+        }).fail(function(error) {
+            console.error('Ошибка:', error);
+            // Обрабатывайте ошибку...
+        });   
+}

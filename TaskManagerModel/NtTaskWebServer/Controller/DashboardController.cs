@@ -1,5 +1,7 @@
 ﻿using MyWebFramework;
+using NtTaskWebServer.Framework.Attributes;
 using NtTaskWebServer.Framework.Helpers;
+using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,16 @@ namespace NtTaskWebServer.Controller
 {
     public class DashboardController
     {
+        [NeedAuth(Role.Reader)]
         public async Task GetDashboardAsync(HttpListenerContext context)
         {
             var view = new View("View/Dashboard.htm", "text/html");
             await WebHelper.SendViewAsync(context, view);
+        }
+        public async Task PostExitFromAccountAsync(HttpListenerContext context)
+        {
+            WebHelper.DeleteSession(context);
+            await WebHelper.SendOkAsync(context, "ok");
         }
     }
 }

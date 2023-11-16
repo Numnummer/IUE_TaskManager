@@ -1,4 +1,5 @@
 ﻿using MyWebFramework;
+using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,15 +35,39 @@ namespace NtTaskWebServer.Framework.Helpers
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public static void SendSessionAsync(HttpListenerContext context, string userName)
+        public static async Task SendSessionAsync(HttpListenerContext context, string userName)
         {
-            var cookie = SessionHelper.GetSessionCookie(userName);
+            var role = Role.Owner;
+            if (!await DatabaseHelper.WriteRoleAsync(context.Request.RawUrl, userName, role))
+            {
+                Send500(context);
+                return;
+            }
+            var cookie = SessionHelper.MakeSessionCookie(userName, role);
             context.Response.Cookies.Add(cookie);
         }
 
         public static void Send401(HttpListenerContext context)
         {
             context.Response.StatusCode = 401;
+        }
+
+        public static void Send500(HttpListenerContext context)
+        {
+            context.Response.StatusCode = 500;
+        }
+
+        public static void DeleteSession(HttpListenerContext context)
+        {
+            var sessionCookie = context.Request.Cookies["session"];
+            if (sessionCookie == null)
+            {
+                return;
+            }
+            if (SessionHelper.RemoveCookie(sessionCookie))
+            {
+                sessionCookie.Expires = DateTime.Now.AddDays(-1);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NtTaskWebServer.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -26,16 +27,23 @@ namespace NtTaskWebServer.Framework.Helpers
             }
             return false;
         }
-        public static Cookie GetSessionCookie(string userName)
+        public static Cookie MakeSessionCookie(string userName, Role role)
         {
             var sessionId = Guid.NewGuid();
             _sessions.Add(userName, sessionId);
+            var value = new UserData(userName, sessionId, role);
             return new Cookie()
             {
                 Name = "session",
-                Value = sessionId.ToString() + ' ' + userName,
+                Value = value.ToString(),
                 Expires = DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
             };
+        }
+
+        public static bool RemoveCookie(Cookie cookie)
+        {
+            var userName = cookie.Value.Split(' ')[1];
+            return _sessions.Remove(userName);
         }
     }
 }

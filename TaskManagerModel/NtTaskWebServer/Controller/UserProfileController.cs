@@ -1,5 +1,7 @@
 ﻿using MyWebFramework;
+using NtTaskWebServer.Framework.Attributes;
 using NtTaskWebServer.Framework.Helpers;
+using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +14,14 @@ namespace NtTaskWebServer.Controller
 {
     public class UserProfileController
     {
+        [NeedAuth(Role.Reader)]
         public async Task GetUserProfileAsync(HttpListenerContext context)
         {
             var view = new View("View/UserProfile.htm", "text/html");
 
             await WebHelper.SendViewAsync(context, view);
         }
+        [NeedAuth(Role.Reader)]
         public async Task GetUserDataAsync(HttpListenerContext context)
         {
             var cookie = context.Request.Cookies["session"];
