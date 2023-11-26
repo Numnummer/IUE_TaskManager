@@ -46,6 +46,7 @@ namespace NtTaskWebServer.Controller
             catch (Exception ex)
             {
                 await WebHelper.Send400Async(context, "Не правильные данные");
+                return;
             }
 
             var view = new View("View/TaskCard.htm", "text/html");
