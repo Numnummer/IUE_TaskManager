@@ -26,7 +26,7 @@ namespace NtTaskWebServer.Controller
             var isDataExists = await DatabaseHelper.IsLoginDataExistAsync(loginData);
             if (isDataExists)
             {
-                await WebHelper.SendSessionAsync(context, loginData.UserName);
+                WebHelper.SendSession(context, loginData.UserName);
                 await WebHelper.SendOkAsync(context, "User accepted");
             }
             else

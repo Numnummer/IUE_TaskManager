@@ -15,26 +15,33 @@ namespace NtTaskWebServer.Framework.Middleware
 
         public override async Task Invoke(HttpListenerContext context)
         {
-            await Task.Run(async () =>
+            if (WebSettings.IsAuthentificated)
             {
-                var cookies = context.Request.Cookies;
-                var data = cookies["session"]?.Value;
-                string role = string.Empty;
-                try
+                await Task.Run(async () =>
                 {
-                    role = data.Split(' ')[2];
-                }
-                catch (Exception)
-                {
-                    await WebHelper.Send400Async(context, "Не валидная сессия");
-                }
-                if (Enum.TryParse(typeof(Role), role, false, out var actualRole))
-                {
-                    WebSettings.Role=(Role)actualRole;
-                    return;
-                }
-                await WebHelper.Send400Async(context, "Не валидная роль");
-            });
+                    var cookies = context.Request.Cookies;
+                    var data = cookies["session"]?.Value;
+                    string role = string.Empty;
+                    try
+                    {
+                        role = data.Split(' ')[2];
+                    }
+                    catch (Exception)
+                    {
+                        await WebHelper.Send400Async(context, "Не валидная сессия");
+                        WebSettings.Role=Role.NoRights;
+                        return;
+                    }
+                    if (Enum.TryParse(typeof(Role), role, false, out var actualRole))
+                    {
+                        WebSettings.Role=(Role)actualRole;
+                        WebHelper.UpdateSession(context);
+                        return;
+                    }
+                    await WebHelper.Send400Async(context, "Не валидная роль");
+                    WebSettings.Role=Role.NoRights;
+                });
+            }
             if (_successor!=null)
             {
                 await _successor.Invoke(context);

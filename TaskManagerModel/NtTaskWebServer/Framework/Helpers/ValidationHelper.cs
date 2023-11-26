@@ -32,5 +32,11 @@ namespace NtTaskWebServer.Framework.Helpers
             Regex regex = new Regex(pattern);
             return regex.IsMatch(email);
         }
+
+        public static bool IsValidTaskData(TaskData taskData)
+            => taskData!=null
+                && taskData.Name.Length>0
+                && uint.TryParse(taskData.Priority, out uint _)
+                && taskData.Deadline > DateTimeOffset.UtcNow;
     }
 }

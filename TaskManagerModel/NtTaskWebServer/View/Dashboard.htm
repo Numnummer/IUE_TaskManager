@@ -10,6 +10,30 @@
 </head>
 
 <body>
+    <div id="taskForm">
+        <button onclick="hideForm()">X</button>
+        <form class="task">
+            <div class="formItem">
+                <label class="labelText">Имя задачи</label>
+                <input class="inputText" type="text" id="TaskName" />
+            </div>
+
+            <div class="formItem">
+                <label class="labelText">Дедлайн</label>
+                <input class="inputText" type="datetime-local" id="Deadline" />
+            </div>
+
+            <div class="formItem">
+                <label class="labelText">Приоритет</label>
+                <input class="inputText" type="number" id="Priority" />
+            </div>
+
+            <button type="button" class="classicButton" onclick="addTask()">Создать зачачу</button>
+            <br />
+            <label id="errorLabel"></label>
+        </form>
+    </div>
+
     <div class="pageHeader">
         <button class="classicButton">Помощь</button>
         <button class="classicButton" onclick="ToProfile()">Профиль</button>
@@ -20,96 +44,8 @@
         <div class="column" id="NotStarted">
             <div class="columnHeader">
                 Не начаты
+                <button class="AddButton" onclick="openForm()">+</button>
             </div>
-
-
-            <div class="card">
-                <div class="cardName">
-                    Сделать сайт
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="cardName">
-                    Ничего не делать
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="cardName">
-                    Ничего не делать
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="cardName">
-                    Ничего не делать
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="cardName">
-                    Ничего не делать
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="cardName">
-                    Ничего не делать
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-
-
         </div>
 
         <div class="column" id="InProcess">
@@ -122,22 +58,6 @@
             <div class="columnHeader">
                 Завершены
             </div>
-
-            <div class="card">
-                <div class="cardName">
-                    ...
-                </div>
-                <div class="date">
-                    <div class="startDate">
-                        В процессе с: 24.10.2023 12:00
-
-                    </div>
-                    <div class="deadline">
-                        Дедлайн: 24.10.2023 13:00
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         <div class="column" id="Explicit">
@@ -152,3 +72,4 @@
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="www/DashboardScripts.js"></script>
+<script src="www/TaskCardScripts.js"></script>

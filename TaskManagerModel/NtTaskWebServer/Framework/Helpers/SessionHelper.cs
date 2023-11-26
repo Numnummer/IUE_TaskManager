@@ -1,4 +1,5 @@
-﻿using NtTaskWebServer.Model;
+﻿using Microsoft.Extensions.Caching.Memory;
+using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class SessionHelper
     {
+        //private static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
         private static readonly Dictionary<string, Guid> _sessions = new();
         internal static Dictionary<string, Guid> Sessions => _sessions;
         public const byte CookieLifetimeMinutes = 30;

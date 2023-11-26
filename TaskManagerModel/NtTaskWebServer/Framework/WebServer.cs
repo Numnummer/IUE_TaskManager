@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NtTaskWebServer.Framework.Middleware;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -21,7 +22,8 @@ namespace NtTaskWebServer.Framework
             while (!cancellationToken.IsCancellationRequested)
             {
                 var context = await _listener.GetContextAsync();
-                await Router.RouteAsync(context);
+                //await Router.RouteAsync(context);
+                await MiddlewareRunner.RunMiddleware(context);
                 Console.WriteLine(cancellationToken.IsCancellationRequested);
             }
             _listener.Close();

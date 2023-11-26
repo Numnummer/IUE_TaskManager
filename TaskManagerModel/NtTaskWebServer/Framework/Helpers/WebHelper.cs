@@ -17,6 +17,7 @@ namespace NtTaskWebServer.Framework.Helpers
             using var stream = context.Response.OutputStream;
             var bytes = Encoding.UTF8.GetBytes(message);
             await stream.WriteAsync(bytes, 0, bytes.Length);
+            context.Response.Close();
         }
 
         public static async Task SendViewAsync(HttpListenerContext context, View view)
@@ -35,26 +36,28 @@ namespace NtTaskWebServer.Framework.Helpers
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public static async Task SendSessionAsync(HttpListenerContext context, string userName)
+        public static void SendSession(HttpListenerContext context, string userName)
         {
             var role = Role.Owner;
-            if (!await DatabaseHelper.WriteRoleAsync(context.Request.RawUrl, userName, role))
-            {
-                Send500(context);
-                return;
-            }
             var cookie = SessionHelper.MakeSessionCookie(userName, role);
             context.Response.Cookies.Add(cookie);
+        }
+
+        public static void UpdateSession(HttpListenerContext context)
+        {
+            context.Request.Cookies["session"].Expires=DateTime.UtcNow.AddMinutes(SessionHelper.CookieLifetimeMinutes);
         }
 
         public static void Send401(HttpListenerContext context)
         {
             context.Response.StatusCode = 401;
+            context.Response.Close();
         }
 
         public static void Send500(HttpListenerContext context)
         {
             context.Response.StatusCode = 500;
+            context.Response.Close();
         }
 
         public static void DeleteSession(HttpListenerContext context)

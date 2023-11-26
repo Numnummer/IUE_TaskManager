@@ -4,19 +4,19 @@
     margin: 2%;
 }
 
-.column{
+.column {
     border-style: solid;
     background-color: rgba(0, 0, 0, 0.301);
     width: 22vw;
 }
 
-.columnHeader{
+.columnHeader {
     background-color: rgba(255, 255, 255, 0.301);
     font-size: 1.5vw;
     text-align: center;
 }
 
-.card{
+.card {
     margin: 5%;
     background-color: white;
     padding: 3%;
@@ -24,17 +24,50 @@
     width: 18.5vw;
 }
 
-.date{
-    
+.date {
     margin: 1%;
     border-style: dotted;
     width: 18vw;
     font-size: 1.3vw;
 }
 
-.cardName{
+.cardName {
     text-align: center;
     border-style: dotted;
     margin: 1%;
     width: 18vw;
 }
+
+#taskForm {
+    display: none;
+    position: absolute;
+    top: 2vh;
+    left: 2vw;
+    width: 95%;
+    height: 95%;
+    background-color: rgba(0, 0, 0, 0.7); /* ѕример полупрозрачного фона */
+    z-index: 9999; /* ”ровень отображени€ - значение может быть любым */
+}
+
+.task {
+    text-align: center;
+    margin-top: 18%;
+}
+
+.formItem {
+    margin: 5%;
+    scale: 200%;
+}
+
+.labelText {
+    color: rgba(255, 255, 255, 0.911);
+    font-family: fantasy;
+}
+
+.inputText {
+    border-radius: 0.7vw;
+}
+
+    .inputText:hover {
+        box-shadow: 1vw 1vw 1vw rgba(0, 0, 0, 0.41);
+    }
