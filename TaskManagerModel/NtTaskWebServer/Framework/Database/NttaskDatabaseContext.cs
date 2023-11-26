@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Framework
+namespace NtTaskWebServer.Framework.Database
 {
     public class NttaskDatabaseContext : DatabaseContext
     {
@@ -17,7 +17,7 @@ namespace NtTaskWebServer.Framework
 
         public async Task<bool> WriteLoginDataAsync(LoginData loginData)
         {
-            if (loginData==null || !ValidationHelper.IsValidLoginData(loginData)
+            if (loginData == null || !ValidationHelper.IsValidLoginData(loginData)
                 || await IsExistUserNameAsync(loginData.UserName))
             {
                 return false;
@@ -26,19 +26,19 @@ namespace NtTaskWebServer.Framework
             var commandText = "insert into userdata(name,email,login,password) " +
                 $"values('{loginData.UserName}','{loginData.Email}','{loginData.Login}','{hashedPassword}')";
             var updated = await ExecuteNonQueryAsync(commandText);
-            return updated>0;
+            return updated > 0;
         }
 
         public async Task<bool> IsExistUserNameAsync(string userName)
         {
             var commandText = $"select * from userdata where name='{userName}'";
             var updated = await ExecuteScalarAsync(commandText);
-            return updated!=null;
+            return updated != null;
         }
 
         public async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
         {
-            if (loginData==null || !ValidationHelper.IsValidLoginDataForEnter(loginData)
+            if (loginData == null || !ValidationHelper.IsValidLoginDataForEnter(loginData)
                 || !await IsExistUserNameAsync(loginData.UserName))
             {
                 return false;
@@ -47,7 +47,7 @@ namespace NtTaskWebServer.Framework
             var commandText = $"select * from userdata where " +
                 $"name='{loginData.UserName}' and password='{hashedPassword}'";
             var updated = await ExecuteScalarAsync(commandText);
-            return updated!=null;
+            return updated != null;
         }
 
         private async Task<object?> ExecuteScalarAsync(string commandText)
@@ -83,12 +83,13 @@ namespace NtTaskWebServer.Framework
             return await LoginDataBuilder.BuildLoginDataByDataReaderAsync(reader);
         }
 
-        public async Task<bool> WriteRoleAsync(string url, string userName, Role role)
+        public async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
         {
-            var commandText = "insert into roles(url,user_name,role)" +
-                $"values ('{url}','{userName}','{role}')";
+            var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name)" +
+                $"values ('{taskData.Id}','{taskData.Name}','{taskData.StartTime}'," +
+                $"'{taskData.Deadline}','{taskData.Priority}','{username}')";
             var result = await ExecuteNonQueryAsync(commandText);
-            return result>0;
+            return result > 0;
         }
     }
 }

@@ -47,5 +47,17 @@ namespace NtTaskWebServer.Framework.Helpers
             memoryCache.Remove(userName);
             return memoryCache.TryGetValue(userName, out _);
         }
+        public static string? GetUserName(HttpListenerContext context)
+        {
+            try
+            {
+                var cookie = context.Request.Cookies["session"];
+                return cookie.Value.Split(' ')[1];
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

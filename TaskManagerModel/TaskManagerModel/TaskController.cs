@@ -10,17 +10,17 @@ namespace TaskManagerModel
     {
         private readonly Dictionary<Guid, Task> _tasks = new Dictionary<Guid, Task>();
 
-        public bool CreateTask(string name, DateTimeOffset deadline, uint priority)
+        public Task CreateTask(string name, DateTimeOffset deadline, uint priority)
         {
             bool isArgsInvalid = string.IsNullOrWhiteSpace(name) ||
                 deadline <= DateTimeOffset.UtcNow;
             if (isArgsInvalid)
             {
-                return false;
+                return null;
             }
             var task = new Task(name, deadline, priority);
             _tasks.Add(task.Id, task);
-            return true;
+            return task;
         }
 
         public Task GetTaskById(Guid taskId)

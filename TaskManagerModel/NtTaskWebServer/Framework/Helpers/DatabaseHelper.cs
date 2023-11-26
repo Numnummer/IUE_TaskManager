@@ -1,4 +1,5 @@
-﻿using NtTaskWebServer.Model;
+﻿using NtTaskWebServer.Framework.Database;
+using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,9 @@ namespace NtTaskWebServer.Framework.Helpers
             return await databaseContext.GetUserDataAsync(name);
         }
 
-        public static async Task<bool> WriteRoleAsync(string url, string userName, Role role)
+        public static async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
         {
-            return await databaseContext.WriteRoleAsync(url, userName, role);
+            return await databaseContext.WriteTaskAsync(userName, taskData);
         }
     }
 }

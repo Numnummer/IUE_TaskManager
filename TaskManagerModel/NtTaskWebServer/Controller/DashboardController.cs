@@ -14,12 +14,10 @@ namespace NtTaskWebServer.Controller
 {
     public class DashboardController
     {
-        private readonly TaskManagerModel.TaskController _taskController = new();
-
         [NeedAuth(Role.Reader)]
         public async Task GetDashboardAsync(HttpListenerContext context)
         {
-            _taskController.UpdateAllTasks();
+            TaskHelper.UpdateAllTasks();
             var view = new View("View/Dashboard.htm", "text/html");
             await WebHelper.SendViewAsync(context, view);
         }
@@ -41,9 +39,9 @@ namespace NtTaskWebServer.Controller
                     throw new Exception();
                 }
                 var priority = uint.TryParse(task.Priority, out var priorityNumber);
-                _taskController.CreateTask(task.Name, task.Deadline, priorityNumber);
+                await TaskHelper.CreateTaskAsync(context, task.Name, task.Deadline, priorityNumber);
             }
-            catch (Exception ex)
+            catch
             {
                 await WebHelper.Send400Async(context, "Не правильные данные");
                 return;
