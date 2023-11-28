@@ -1,4 +1,5 @@
-﻿using NtTaskWebServer.Framework.Database;
+﻿using Npgsql;
+using NtTaskWebServer.Framework.Database;
 using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
@@ -13,23 +14,19 @@ namespace NtTaskWebServer.Framework.Helpers
     {
         private static readonly NttaskDatabaseContext databaseContext = new();
         public static async Task<bool> WriteLoginDataAsync(LoginData? loginData)
-        {
-            return await databaseContext.WriteLoginDataAsync(loginData);
-        }
+            => await databaseContext.WriteLoginDataAsync(loginData);
 
         public static async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
-        {
-            return await databaseContext.IsLoginDataExistAsync(loginData);
-        }
+            => await databaseContext.IsLoginDataExistAsync(loginData);
 
         public static async Task<LoginData> GetUserDataAsync(string name)
-        {
-            return await databaseContext.GetUserDataAsync(name);
-        }
+            => await databaseContext.GetUserDataAsync(name);
 
-        public static async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
-        {
-            return await databaseContext.WriteTaskAsync(userName, taskData);
-        }
+        public static async Task<bool> WriteTaskAsync(string userName, TaskManagerModel.Task taskData)
+            => await databaseContext.WriteTaskAsync(userName, taskData);
+        public static async Task<TaskManagerModel.Task[]> GetTaskDataAsync(string userName)
+            => await databaseContext.GetTaskDataAsync(userName);
+        public static async Task UpdateTask(TaskManagerModel.Task task)
+            => await databaseContext.UpdateTask(task);
     }
 }

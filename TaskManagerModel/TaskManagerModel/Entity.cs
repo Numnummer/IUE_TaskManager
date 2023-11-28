@@ -9,5 +9,7 @@
             Name = name;
             Id = Guid.NewGuid();
         }
+        public Entity() { }
+
     }
 }

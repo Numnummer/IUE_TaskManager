@@ -10,10 +10,27 @@ namespace NtTaskWebServer.Framework.Helpers
     public static class TaskHelper
     {
         private static readonly TaskManagerModel.TaskController _taskController = new();
-
-        public static void UpdateAllTasks()
+        static TaskHelper()
         {
+            _taskController.TaskUpdated+=OnTaskUpdate;
+        }
+        public static void OnTaskUpdate(TaskManagerModel.Task updatedTask)
+        {
+            Task.Run(async () =>
+            {
+                await DatabaseHelper.UpdateTask(updatedTask);
+            });
+        }
+        public static async Task UpdateAllTasksAsync(HttpListenerContext context)
+        {
+            var tasks = await DatabaseHelper.GetTaskDataAsync(SessionHelper.GetUserName(context));
+            _taskController.AddIfNotExist(tasks);
             _taskController.UpdateAllTasks();
+        }
+
+        public static bool StartTaskById(Guid id)
+        {
+            return _taskController.StartTaskById(id);
         }
 
         public static async Task CreateTaskAsync(HttpListenerContext context, string name, DateTimeOffset deadline, uint priorityNumber)

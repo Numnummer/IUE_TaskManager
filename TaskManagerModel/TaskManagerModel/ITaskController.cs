@@ -12,5 +12,6 @@ namespace TaskManagerModel
         bool RemoveTaskById(Guid taskId);
         TaskManagerModel.Task GetTaskById(Guid taskId);
         void UpdateAllTasks();
+        event Action<TaskManagerModel.Task> TaskUpdated;
     }
 }

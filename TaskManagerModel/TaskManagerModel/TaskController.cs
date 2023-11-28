@@ -10,6 +10,8 @@ namespace TaskManagerModel
     {
         private readonly Dictionary<Guid, Task> _tasks = new Dictionary<Guid, Task>();
 
+        public event Action<Task> TaskUpdated = (Task task) => { };
+
         public Task CreateTask(string name, DateTimeOffset deadline, uint priority)
         {
             bool isArgsInvalid = string.IsNullOrWhiteSpace(name) ||
@@ -43,6 +45,7 @@ namespace TaskManagerModel
             if (_tasks.TryGetValue(taskId, out var task))
             {
                 task.Status=status;
+                TaskUpdated(task);
                 return true;
             }
             return false;
@@ -54,6 +57,7 @@ namespace TaskManagerModel
                 deadline > DateTimeOffset.UtcNow)
             {
                 task.Deadline=deadline;
+                TaskUpdated(task);
                 return true;
             }
             return false;
@@ -64,6 +68,7 @@ namespace TaskManagerModel
             if (_tasks.TryGetValue(taskId, out var task))
             {
                 task.Priority=priority;
+                TaskUpdated(task);
                 return true;
             }
             return false;
@@ -75,6 +80,7 @@ namespace TaskManagerModel
             {
                 var task = _tasks[taskId];
                 task.StartTime=DateTimeOffset.UtcNow;
+                TaskUpdated(task);
                 return true;
             }
             return false;
@@ -92,6 +98,7 @@ namespace TaskManagerModel
                 if (task.Deadline<=DateTimeOffset.UtcNow)
                 {
                     task.Status=TaskStatus.Expired;
+                    TaskUpdated(task);
                 }
                 return true;
             }
@@ -105,6 +112,18 @@ namespace TaskManagerModel
                 if (pair.Value.Deadline<=DateTimeOffset.UtcNow)
                 {
                     pair.Value.Status=TaskStatus.Expired;
+                    TaskUpdated(pair.Value);
+                }
+            }
+        }
+
+        public void AddIfNotExist(Task[] tasks)
+        {
+            foreach (var task in tasks)
+            {
+                if (!_tasks.ContainsKey(task.Id))
+                {
+                    _tasks.Add(task.Id, task);
                 }
             }
         }

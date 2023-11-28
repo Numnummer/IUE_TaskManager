@@ -18,5 +18,7 @@ namespace TaskManagerModel
             Deadline = deadline;
             Priority = priority;
         }
+        public Task() { }
+
     }
 }

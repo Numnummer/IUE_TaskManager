@@ -2,19 +2,26 @@
 
 var app = new WebServer();
 var cts = new CancellationTokenSource();
-app.ListenAsync("http://127.0.0.1:5051/", cts.Token);
+_=app.ListenAsync("http://127.0.0.1:5051/", cts.Token);
 
-
-while (app.IsServerWork)
+try
 {
-    switch (Console.ReadKey().KeyChar)
+    while (app.IsServerWork)
     {
-        case 'q':
-            cts.Cancel();
-            break;
-        default:
-            break;
+        switch (Console.ReadKey().KeyChar)
+        {
+            case 'q':
+                cts.Cancel();
+                break;
+            default:
+                break;
+        }
     }
 }
+catch (Exception exception)
+{
+    Console.WriteLine(exception.Message);
+}
+
 
 

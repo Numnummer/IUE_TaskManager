@@ -17,7 +17,7 @@ namespace NtTaskWebServer.Controller
         [NeedAuth(Role.Reader)]
         public async Task GetDashboardAsync(HttpListenerContext context)
         {
-            TaskHelper.UpdateAllTasks();
+            await TaskHelper.UpdateAllTasksAsync(context);
             var view = new View("View/Dashboard.htm", "text/html");
             await WebHelper.SendViewAsync(context, view);
         }

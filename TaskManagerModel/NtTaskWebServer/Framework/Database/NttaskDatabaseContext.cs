@@ -50,28 +50,6 @@ namespace NtTaskWebServer.Framework.Database
             return updated != null;
         }
 
-        private async Task<object?> ExecuteScalarAsync(string commandText)
-        {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            using var command = new NpgsqlCommand(commandText, connection);
-            return await command.ExecuteScalarAsync();
-        }
-        private async Task<int> ExecuteNonQueryAsync(string commandText)
-        {
-            using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            using var command = new NpgsqlCommand(commandText, connection);
-            return await command.ExecuteNonQueryAsync();
-        }
-
-        private async Task<NpgsqlDataReader> ExecuteReaderAsync(NpgsqlConnection connection, string commandText)
-        {
-            await connection.OpenAsync();
-            using var command = new NpgsqlCommand(commandText, connection);
-            return await command.ExecuteReaderAsync();
-        }
-
         public async Task<LoginData> GetUserDataAsync(string name)
         {
             var commandText = "select * from userdata " +
@@ -82,7 +60,25 @@ namespace NtTaskWebServer.Framework.Database
 
             return await LoginDataBuilder.BuildLoginDataByDataReaderAsync(reader);
         }
+        public async Task<TaskManagerModel.Task[]> GetTaskDataAsync(string userName)
+        {
+            var commandText = "select id,name,start_time,deadline,priority" +
+                " from tasks " +
+                $"where user_name='{userName}'";
+            using var connection = new NpgsqlConnection(_connectionString);
 
+            var reader = await ExecuteReaderAsync(connection, commandText);
+
+            return await TaskDataBuilder.BuildTaskDataByDataReaderAsync(reader);
+        }
+        public async Task UpdateTask(TaskManagerModel.Task task)
+        {
+            var commandText = "update tasks " +
+                $"set name='{task.Name}', start_time='{task.StartTime}'," +
+                $"deadline='{task.Deadline}',priority='{task.Priority}' " +
+                $"where tasks.id='{task.Id}'";
+            await ExecuteNonQueryAsync(commandText);
+        }
         public async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
         {
             var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name)" +
