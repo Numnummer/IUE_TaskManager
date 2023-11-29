@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyWebFramework
+namespace NtTaskWebServer.Model
 {
     public class View
     {
@@ -12,8 +12,8 @@ namespace MyWebFramework
         public string ContentType { get; set; }
         public View(string fileName, string contentType)
         {
-            FileName=fileName;
-            ContentType=contentType;
+            FileName = fileName;
+            ContentType = contentType;
         }
     }
 }

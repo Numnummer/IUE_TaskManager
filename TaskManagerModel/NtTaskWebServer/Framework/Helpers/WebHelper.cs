@@ -1,10 +1,10 @@
-﻿using MyWebFramework;
-using NtTaskWebServer.Model;
+﻿using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace NtTaskWebServer.Framework.Helpers
@@ -71,6 +71,13 @@ namespace NtTaskWebServer.Framework.Helpers
             {
                 sessionCookie.Expires = DateTime.Now.AddDays(-1);
             }
+        }
+
+        public static async Task SendTasksAsync(HttpListenerContext context, TaskManagerModel.Task[] tasks)
+        {
+            var response = await Task.Run(() => JsonSerializer.Serialize(tasks));
+            context.Response.ContentType="application/json";
+            await SendOkAsync(context, response);
         }
     }
 }

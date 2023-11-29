@@ -62,7 +62,7 @@ namespace NtTaskWebServer.Framework.Database
         }
         public async Task<TaskManagerModel.Task[]> GetTaskDataAsync(string userName)
         {
-            var commandText = "select id,name,start_time,deadline,priority" +
+            var commandText = "select id,name,start_time,deadline,priority,status" +
                 " from tasks " +
                 $"where user_name='{userName}'";
             using var connection = new NpgsqlConnection(_connectionString);
@@ -75,15 +75,16 @@ namespace NtTaskWebServer.Framework.Database
         {
             var commandText = "update tasks " +
                 $"set name='{task.Name}', start_time='{task.StartTime}'," +
-                $"deadline='{task.Deadline}',priority='{task.Priority}' " +
+                $"deadline='{task.Deadline}',priority='{task.Priority}'," +
+                $" status='{task.Status}'" +
                 $"where tasks.id='{task.Id}'";
             await ExecuteNonQueryAsync(commandText);
         }
         public async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
         {
-            var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name)" +
+            var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name,status)" +
                 $"values ('{taskData.Id}','{taskData.Name}','{taskData.StartTime}'," +
-                $"'{taskData.Deadline}','{taskData.Priority}','{username}')";
+                $"'{taskData.Deadline}','{taskData.Priority}','{username}','{taskData.Status}')";
             var result = await ExecuteNonQueryAsync(commandText);
             return result > 0;
         }

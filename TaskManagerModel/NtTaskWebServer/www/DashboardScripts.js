@@ -22,6 +22,35 @@ function ExitFromAccount() {
 }
 
 window.addEventListener('load', function () {
-    // Your code here
-    console.log('The page has loaded!');
+    $.get('Dashboard/Tasks', function (response) {
+
+        var json = JSON.stringify(response);
+        var tasks = JSON.parse(json);
+        tasks.forEach(task => ProcessTask(task));
+
+    }).fail(function (error) {
+        console.error('Ошибка:', error);
+        // Обрабатывайте ошибку...
+    });
 });
+
+function ProcessTask(task) {
+    switch (task.Status) {
+        case 0:
+            document.getElementById("NotStarted").innerHTML;
+            break;
+        case 1:
+            // code to execute when expression matches value2
+            break;
+        case 2:
+            // code to execute when expression matches value2
+            break;
+        case 3:
+            // code to execute when expression matches value2
+            break;
+        default:
+            // code to execute when expression doesn't match any case
+            break;
+    }
+    console.log(task);
+}

@@ -24,6 +24,9 @@ function addTask() {
             }
         });
     }
+    else {
+        console.log("Invalid data");
+    }
 }
 
 function hideForm() {

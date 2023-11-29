@@ -49,6 +49,10 @@ namespace NtTaskWebServer.Framework.Middleware
             {
                 await _successor.Invoke(context);
             }
+            else
+            {
+                context.Response.Close();
+            }
         }
 
         private async Task CallControllerAsync(object controller, MethodInfo method, HttpListenerContext context)

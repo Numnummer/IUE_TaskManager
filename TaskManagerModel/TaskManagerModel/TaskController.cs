@@ -12,7 +12,7 @@ namespace TaskManagerModel
 
         public event Action<Task> TaskUpdated = (Task task) => { };
 
-        public Task CreateTask(string name, DateTimeOffset deadline, uint priority)
+        public Task CreateTask(string name, DateTime deadline, uint priority)
         {
             bool isArgsInvalid = string.IsNullOrWhiteSpace(name) ||
                 deadline <= DateTimeOffset.UtcNow;
@@ -51,7 +51,7 @@ namespace TaskManagerModel
             return false;
         }
 
-        public bool SetTaskDeadlineById(Guid taskId, DateTimeOffset deadline)
+        public bool SetTaskDeadlineById(Guid taskId, DateTime deadline)
         {
             if (_tasks.TryGetValue(taskId, out var task) &&
                 deadline > DateTimeOffset.UtcNow)
@@ -79,7 +79,7 @@ namespace TaskManagerModel
             if (SetTaskStatusById(taskId, TaskStatus.InProcess))
             {
                 var task = _tasks[taskId];
-                task.StartTime=DateTimeOffset.UtcNow;
+                task.StartTime=DateTime.UtcNow;
                 TaskUpdated(task);
                 return true;
             }

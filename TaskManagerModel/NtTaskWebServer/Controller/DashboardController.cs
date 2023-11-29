@@ -1,5 +1,4 @@
-﻿using MyWebFramework;
-using NtTaskWebServer.Framework.Attributes;
+﻿using NtTaskWebServer.Framework.Attributes;
 using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
 using System;
@@ -17,9 +16,15 @@ namespace NtTaskWebServer.Controller
         [NeedAuth(Role.Reader)]
         public async Task GetDashboardAsync(HttpListenerContext context)
         {
-            await TaskHelper.UpdateAllTasksAsync(context);
             var view = new View("View/Dashboard.htm", "text/html");
             await WebHelper.SendViewAsync(context, view);
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetTasksAsync(HttpListenerContext context)
+        {
+            var tasks = await TaskHelper.UpdateAllTasksAsync(context);
+            await WebHelper.SendTasksAsync(context, tasks);
         }
         public async Task PostExitFromAccountAsync(HttpListenerContext context)
         {

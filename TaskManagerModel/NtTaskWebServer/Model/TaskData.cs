@@ -9,7 +9,7 @@ namespace NtTaskWebServer.Model
     public class TaskData
     {
         public string Name { get; set; }
-        public DateTimeOffset Deadline { get; set; }
+        public DateTime Deadline { get; set; }
         public string Priority { get; set; }
     }
 }
