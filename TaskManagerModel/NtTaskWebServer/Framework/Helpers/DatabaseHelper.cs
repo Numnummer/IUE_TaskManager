@@ -33,5 +33,7 @@ namespace NtTaskWebServer.Framework.Helpers
             => await databaseContext.RemoveTaskAsync(userName, id);
         public static async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
             => await databaseContext.SetTaskStatusAsync(userName, id, status);
+        public static async Task<string[]> GetUsersAsync(string prompt)
+            => await databaseContext.GetUsersAsync(prompt);
     }
 }

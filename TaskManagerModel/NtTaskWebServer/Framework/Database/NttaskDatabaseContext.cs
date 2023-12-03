@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
+using NtTaskWebServer.Model.Builder;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -103,6 +104,16 @@ namespace NtTaskWebServer.Framework.Database
                 $" where id='{id}' and user_name='{userName}'";
             var result = await ExecuteNonQueryAsync(commandText);
             return result > 0;
+        }
+
+        public async Task<string[]> GetUsersAsync(string prompt)
+        {
+            var commandText = $"select \"name\" from userdata" +
+                $" where \"name\" like '{prompt}%' limit 5";
+            using var connection = new NpgsqlConnection(_connectionString);
+
+            var reader = await ExecuteReaderAsync(connection, commandText);
+            return await UserNamesBuilder.BuildUserNamesByDataReaderAsync(reader);
         }
     }
 }

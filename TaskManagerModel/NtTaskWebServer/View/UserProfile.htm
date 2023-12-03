@@ -12,6 +12,20 @@
 
 <body>
 
+    <div id="friendForm">
+        <button onclick="hideForm()">X</button>
+        <form class="task">
+            <div class="formItem">
+                <label class="labelText">Введите имя</label>
+                <input class="inputText" type="text" id="UserNameInput" />
+            </div>
+            <div class="formItem">
+                <ul id="users">
+                </ul>
+            </div>
+        </form>
+    </div>
+
     <div class="pageHeader">
         <button class="classicButton">Помощь</button>
         <button class="classicButton" onclick="ToBoard()">Доска</button>
@@ -19,11 +33,17 @@
     </div>
 
     <div class="profile">
-        <label id="Name">Имя</label>
-        <label id="Email">E-mail</label>
-        <label>Логин</label>
-        <label>Друзья</label>
+        Имя: <label id="Name"></label>
+        Email: <label id="Email"></label>
     </div>
+    <table>
+        <tr>
+            <td><label>Друзья</label></td>
+            <td id="friends">
+                <button onclick="AddFriend()">Добавить</button>
+            </td>
+        </tr>
+    </table>
 
 </body>
 

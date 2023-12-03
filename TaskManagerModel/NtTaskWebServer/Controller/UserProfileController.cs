@@ -33,5 +33,19 @@ namespace NtTaskWebServer.Controller
             var response = JsonSerializer.Serialize(userData);
             await WebHelper.SendOkAsync(context, response);
         }
+
+        [NeedAuth(Role.Reader)]
+        public async Task PostUsersAsync(HttpListenerContext context)
+        {
+            using var stream = context.Request.InputStream;
+            var prompt = await JsonSerializer.DeserializeAsync<string>(stream);
+            if (prompt == null)
+            {
+                await WebHelper.Send400Async(context, "prompt not valid");
+                return;
+            }
+            var users = await DatabaseHelper.GetUsersAsync(prompt);
+            await WebHelper.SendJsonObjectAsync(context, users);
+        }
     }
 }

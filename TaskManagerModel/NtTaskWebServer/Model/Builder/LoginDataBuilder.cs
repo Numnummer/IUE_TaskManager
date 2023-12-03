@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Model
+namespace NtTaskWebServer.Model.Builder
 {
     public static class LoginDataBuilder
     {

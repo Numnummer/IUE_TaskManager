@@ -1,13 +1,20 @@
 .profile {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 70vh;
-    margin: 0;
-    flex-direction: column;
 }
 
-label{
+/*label {
     font-size: 2vw;
     margin: 2%;
+}*/
+
+#friendForm {
+    display: none;
+    position: absolute;
+    top: 2vh;
+    left: 2vw;
+    width: 95%;
+    height: 95%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
 }

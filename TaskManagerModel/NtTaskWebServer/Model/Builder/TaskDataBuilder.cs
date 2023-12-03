@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Model
+namespace NtTaskWebServer.Model.Builder
 {
     public static class TaskDataBuilder
     {
@@ -27,10 +27,10 @@ namespace NtTaskWebServer.Model
                     {
                         Id = id,
                         Name = name,
-                        StartTime=start_time,
-                        Deadline=deadline,
-                        Priority=(uint)priority,
-                        Status=GetStatus(status)
+                        StartTime = start_time,
+                        Deadline = deadline,
+                        Priority = (uint)priority,
+                        Status = GetStatus(status)
                     });
                 }
                 catch (Exception e)
