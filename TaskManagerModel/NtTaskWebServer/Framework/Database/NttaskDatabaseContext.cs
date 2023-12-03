@@ -96,5 +96,13 @@ namespace NtTaskWebServer.Framework.Database
             var result = await ExecuteNonQueryAsync(commandText);
             return result > 0;
         }
+
+        public async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
+        {
+            var commandText = $"update tasks set status='{status}'" +
+                $" where id='{id}' and user_name='{userName}'";
+            var result = await ExecuteNonQueryAsync(commandText);
+            return result > 0;
+        }
     }
 }

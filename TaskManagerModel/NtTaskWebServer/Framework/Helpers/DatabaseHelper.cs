@@ -31,5 +31,7 @@ namespace NtTaskWebServer.Framework.Helpers
 
         public static async Task<bool> RemoveTaskAsync(string userName, Guid id)
             => await databaseContext.RemoveTaskAsync(userName, id);
+        public static async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
+            => await databaseContext.SetTaskStatusAsync(userName, id, status);
     }
 }

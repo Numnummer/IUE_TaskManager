@@ -76,5 +76,30 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.Send400Async(context, "cannot remove");
             }
         }
+
+        [NeedAuth(Role.Owner)]
+        public async Task PostDecreaseTaskStatusAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var id = await JsonSerializer.DeserializeAsync<Guid>(requestStream);
+            if (await TaskHelper.DecreaseTaskStatusAsync(context, id))
+            {
+                await WebHelper.SendOkAsync(context, "ok");
+            }
+            await WebHelper.Send400Async(context, "not decreased");
+        }
+
+        [NeedAuth(Role.Owner)]
+        public async Task PostIncreaseTaskStatusAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var id = await JsonSerializer.DeserializeAsync<Guid>(requestStream);
+            if (await TaskHelper.IncreaseTaskStatusAsync(context, id))
+            {
+                await WebHelper.SendOkAsync(context, "ok");
+            }
+            await WebHelper.Send400Async(context, "not increased");
+        }
     }
 }
+

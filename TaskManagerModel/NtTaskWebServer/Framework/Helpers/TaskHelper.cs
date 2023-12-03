@@ -70,5 +70,49 @@ namespace NtTaskWebServer.Framework.Helpers
             }
             return views.ToArray();
         }
+
+        public static async Task<bool> DecreaseTaskStatusAsync(HttpListenerContext context, Guid id)
+        {
+            var task = _taskController.GetTaskById(id);
+            var userName = SessionHelper.GetUserName(context);
+            switch (task.Status)
+            {
+                case TaskManagerModel.TaskStatus.NotStarted:
+                    return false;
+                case TaskManagerModel.TaskStatus.InProcess:
+                    _taskController.SetTaskStatusById(id, TaskManagerModel.TaskStatus.NotStarted);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.NotStarted);
+                    break;
+                case TaskManagerModel.TaskStatus.Done:
+                    _taskController.SetTaskStatusById(id, TaskManagerModel.TaskStatus.InProcess);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.InProcess);
+                    break;
+                case TaskManagerModel.TaskStatus.Expired:
+                    return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> IncreaseTaskStatusAsync(HttpListenerContext context, Guid id)
+        {
+            var task = _taskController.GetTaskById(id);
+            var userName = SessionHelper.GetUserName(context);
+            switch (task.Status)
+            {
+                case TaskManagerModel.TaskStatus.NotStarted:
+                    _taskController.StartTaskById(id);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.InProcess);
+                    break;
+                case TaskManagerModel.TaskStatus.InProcess:
+                    _taskController.CompleteTaskById(id);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.Done);
+                    break;
+                case TaskManagerModel.TaskStatus.Done:
+                    return false;
+                case TaskManagerModel.TaskStatus.Expired:
+                    return false;
+            }
+            return true;
+        }
     }
 }

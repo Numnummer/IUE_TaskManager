@@ -40,7 +40,7 @@ namespace TaskManagerModel
             return _tasks.Remove(taskId);
         }
 
-        private bool SetTaskStatusById(Guid taskId, TaskStatus status)
+        public bool SetTaskStatusById(Guid taskId, TaskStatus status)
         {
             if (_tasks.TryGetValue(taskId, out var task))
             {

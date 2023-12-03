@@ -36,6 +36,11 @@ function UpdateAllTasks() {
 
         var json = JSON.stringify(response);
         var tasks = JSON.parse(json);
+        console.log("before");
+        tasks.sort(function (task1, task2) {
+            return task1.Priority - task2.Priority;
+        });
+        console.log("after");
         //TODO: Оптимизировать удаление
         ClearTasks();
         tasks.forEach(task => ProcessTask(task, card, "add"));
