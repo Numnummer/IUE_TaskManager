@@ -26,6 +26,13 @@ namespace NtTaskWebServer.Controller
             var tasks = await TaskHelper.UpdateAllTasksAsync(context);
             await WebHelper.SendTasksAsync(context, tasks);
         }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetTaskHtmlAsync(HttpListenerContext context)
+        {
+            var view = new View("View/TaskCard.htm", "text/html");
+            await WebHelper.SendViewAsync(context, view);
+        }
         public async Task PostExitFromAccountAsync(HttpListenerContext context)
         {
             WebHelper.DeleteSession(context);
@@ -51,9 +58,23 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.Send400Async(context, "Не правильные данные");
                 return;
             }
+            await WebHelper.SendOkAsync(context, "ok");
+        }
 
-            var view = new View("View/TaskCard.htm", "text/html");
-            await WebHelper.SendViewAsync(context, view);
+        [NeedAuth(Role.Owner)]
+        public async Task PostRemoveTaskAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var id = await JsonSerializer.DeserializeAsync<Guid>(requestStream);
+            var success = await TaskHelper.RemoveTaskAsync(context, id);
+            if (success)
+            {
+                await WebHelper.SendOkAsync(context, "removed");
+            }
+            else
+            {
+                await WebHelper.Send400Async(context, "cannot remove");
+            }
         }
     }
 }

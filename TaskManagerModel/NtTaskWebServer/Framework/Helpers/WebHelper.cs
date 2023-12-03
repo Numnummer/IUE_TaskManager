@@ -79,5 +79,11 @@ namespace NtTaskWebServer.Framework.Helpers
             context.Response.ContentType="application/json";
             await SendOkAsync(context, response);
         }
+        public static async Task SendJsonObjectAsync(HttpListenerContext context, object obj)
+        {
+            var response = await Task.Run(() => JsonSerializer.Serialize(obj));
+            context.Response.ContentType="application/json";
+            await SendOkAsync(context, response);
+        }
     }
 }

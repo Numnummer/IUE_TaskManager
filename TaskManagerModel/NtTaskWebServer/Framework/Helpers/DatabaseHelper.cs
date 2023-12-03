@@ -28,5 +28,8 @@ namespace NtTaskWebServer.Framework.Helpers
             => await databaseContext.GetTaskDataAsync(userName);
         public static async Task UpdateTask(TaskManagerModel.Task task)
             => await databaseContext.UpdateTask(task);
+
+        public static async Task<bool> RemoveTaskAsync(string userName, Guid id)
+            => await databaseContext.RemoveTaskAsync(userName, id);
     }
 }

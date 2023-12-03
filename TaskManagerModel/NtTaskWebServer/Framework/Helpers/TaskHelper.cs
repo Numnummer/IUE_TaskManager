@@ -35,7 +35,7 @@ namespace NtTaskWebServer.Framework.Helpers
             return _taskController.StartTaskById(id);
         }
 
-        public static async Task CreateTaskAsync(HttpListenerContext context, string name, DateTime deadline, uint priorityNumber)
+        public static async Task<TaskManagerModel.Task> CreateTaskAsync(HttpListenerContext context, string name, DateTime deadline, uint priorityNumber)
         {
             var taskObject = _taskController.CreateTask(name, deadline, priorityNumber);
             var userName = SessionHelper.GetUserName(context);
@@ -43,6 +43,22 @@ namespace NtTaskWebServer.Framework.Helpers
             {
                 throw new Exception();
             }
+            return taskObject;
+        }
+
+        public static async Task<bool> RemoveTaskAsync(HttpListenerContext context, Guid id)
+        {
+            var isRemoved = _taskController.RemoveTaskById(id);
+            if (!isRemoved)
+            {
+                return false;
+            }
+            var userName = SessionHelper.GetUserName(context);
+            if (userName!=null && !await DatabaseHelper.RemoveTaskAsync(userName, id))
+            {
+                throw new Exception();
+            }
+            return true;
         }
 
         public static TaskView[] MakeTaskViews(TaskManagerModel.Task[] tasks)

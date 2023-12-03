@@ -15,8 +15,10 @@ function addTask() {
             url: 'Dashboard/CreateTask',
             data: JSON.stringify(taskData),
             success: function (response) {
-                document.getElementById("NotStarted").innerHTML += response;
-                hideForm();
+                if (response == "ok") {
+                    UpdateAllTasks();
+                    hideForm();
+                }
             },
             error: function (xhr, status, error) {
                 // Handle error response
@@ -42,4 +44,42 @@ function IsTaskDataValid(taskData) {
     else {
         return false;
     }
+}
+
+async function GetTaskCard() {
+    await fetch('Dashboard/TaskHtml')
+        .then(response => response.text())
+        .then(html => {
+            return html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    return "";
+}
+
+function RemoveTaskCard(button) {
+    var id = button.parentNode.id;
+    $.ajax({
+        type: 'POST',
+        url: 'Dashboard/RemoveTask',
+        data: JSON.stringify(id),
+        success: function (response) {
+            if (response == "removed") {
+                UpdateAllTasks();
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.log('Failed: ' + error);
+        }
+    });
+}
+
+function DecreaseTaskStatus(button) {
+
+}
+
+function IncreaseTaskStatus(button) {
+
 }

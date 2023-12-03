@@ -88,5 +88,13 @@ namespace NtTaskWebServer.Framework.Database
             var result = await ExecuteNonQueryAsync(commandText);
             return result > 0;
         }
+
+        public async Task<bool> RemoveTaskAsync(string userName, Guid id)
+        {
+            var commandText = $"delete from tasks where id = '{id}'" +
+                $" and user_name='{userName}'";
+            var result = await ExecuteNonQueryAsync(commandText);
+            return result > 0;
+        }
     }
 }
