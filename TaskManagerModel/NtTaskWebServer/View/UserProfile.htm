@@ -16,6 +16,9 @@
         <button onclick="hideForm()">X</button>
         <form class="task">
             <div class="formItem">
+                <label id="operationResult"></label>
+            </div>
+            <div class="formItem">
                 <label class="labelText">Введите имя</label>
                 <input class="inputText" type="text" id="UserNameInput" />
             </div>
@@ -33,15 +36,20 @@
     </div>
 
     <div class="profile">
-        Имя: <label id="Name"></label>
+        Имя: <label id="Name"></label> <br />
         Email: <label id="Email"></label>
     </div>
     <table>
-        <tr>
+        <tr class="profile">
             <td><label>Друзья</label></td>
             <td id="friends">
+                <ul id="friendsList"></ul>
                 <button onclick="AddFriend()">Добавить</button>
             </td>
+        </tr>
+        <tr class="profile">
+            <td><label>Заявки</label></td>
+            <td><ul id="orders"></ul></td>
         </tr>
     </table>
 

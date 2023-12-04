@@ -35,5 +35,12 @@ namespace NtTaskWebServer.Framework.Helpers
             => await databaseContext.SetTaskStatusAsync(userName, id, status);
         public static async Task<string[]> GetUsersAsync(string prompt)
             => await databaseContext.GetUsersAsync(prompt);
+        public static async Task<bool> AddOrderAsync(string userName, string friendName)
+            => await databaseContext.AddOrderAsync(userName, friendName);
+
+        public static async Task<string[]> GetOrdersAsync(string userName)
+            => await databaseContext.GetOrdersAsync(userName);
+        public static async Task<string[]> GetFriendsAsync(string userName)
+            => await databaseContext.GetFriendsAsync(userName);
     }
 }

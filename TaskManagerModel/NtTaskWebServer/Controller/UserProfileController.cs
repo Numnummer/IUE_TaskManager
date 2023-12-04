@@ -34,7 +34,7 @@ namespace NtTaskWebServer.Controller
             await WebHelper.SendOkAsync(context, response);
         }
 
-        [NeedAuth(Role.Reader)]
+        [NeedAuth(Role.Owner)]
         public async Task PostUsersAsync(HttpListenerContext context)
         {
             using var stream = context.Request.InputStream;
@@ -46,6 +46,51 @@ namespace NtTaskWebServer.Controller
             }
             var users = await DatabaseHelper.GetUsersAsync(prompt);
             await WebHelper.SendJsonObjectAsync(context, users);
+        }
+
+        [NeedAuth(Role.Owner)]
+        public async Task PostOrderAsync(HttpListenerContext context)
+        {
+            using var stream = context.Request.InputStream;
+            var friendName = await JsonSerializer.DeserializeAsync<string>(stream);
+            if (friendName == null)
+            {
+                await WebHelper.Send400Async(context, "user name not valid");
+                return;
+            }
+            var userName = SessionHelper.GetUserName(context);
+            if (await DatabaseHelper.AddOrderAsync(userName, friendName))
+            {
+                await WebHelper.SendOkAsync(context, "add");
+                return;
+            }
+            await WebHelper.Send400Async(context, "cannot add");
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetOrdersAsync(HttpListenerContext context)
+        {
+            var userName = SessionHelper.GetUserName(context);
+            if (string.IsNullOrEmpty(userName))
+            {
+                await WebHelper.Send400Async(context, "user not valid");
+                return;
+            }
+            var orders = await DatabaseHelper.GetOrdersAsync(userName);
+            await WebHelper.SendJsonObjectAsync(context, orders);
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetFriendsAsync(HttpListenerContext context)
+        {
+            var userName = SessionHelper.GetUserName(context);
+            if (string.IsNullOrEmpty(userName))
+            {
+                await WebHelper.Send400Async(context, "user not valid");
+                return;
+            }
+            var orders = await DatabaseHelper.GetFriendsAsync(userName);
+            await WebHelper.SendJsonObjectAsync(context, orders);
         }
     }
 }

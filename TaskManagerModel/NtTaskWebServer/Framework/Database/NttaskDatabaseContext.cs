@@ -115,5 +115,38 @@ namespace NtTaskWebServer.Framework.Database
             var reader = await ExecuteReaderAsync(connection, commandText);
             return await UserNamesBuilder.BuildUserNamesByDataReaderAsync(reader);
         }
+
+        public async Task<bool> AddOrderAsync(string userName, string friendName)
+        {
+            var commandText = $"insert into \"order\" values('{userName}','{friendName}')";
+            try
+            {
+                return await ExecuteNonQueryAsync(commandText) > 0;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        public async Task<string[]> GetOrdersAsync(string userName)
+        {
+            var commandText = $"select user_name from \"order\"" +
+                $" where friend_name = '{userName}'";
+            using var connection = new NpgsqlConnection(_connectionString);
+
+            var reader = await ExecuteReaderAsync(connection, commandText);
+            return await UserNamesBuilder.BuildUserNamesByDataReaderAsync(reader);
+        }
+
+        public async Task<string[]> GetFriendsAsync(string userName)
+        {
+            var commandText = $"select friend_name from \"friends\"" +
+                $" where user_name = '{userName}'";
+            using var connection = new NpgsqlConnection(_connectionString);
+
+            var reader = await ExecuteReaderAsync(connection, commandText);
+            return await UserNamesBuilder.BuildUserNamesByDataReaderAsync(reader);
+        }
     }
 }
