@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace NtTaskWebServer.Framework.Helpers
 {
+    //TODO: обернуть методы в try catch
     public static class DatabaseHelper
     {
         private static readonly NttaskDatabaseContext databaseContext = new();
@@ -42,5 +43,10 @@ namespace NtTaskWebServer.Framework.Helpers
             => await databaseContext.GetOrdersAsync(userName);
         public static async Task<string[]> GetFriendsAsync(string userName)
             => await databaseContext.GetFriendsAsync(userName);
+        public static async Task<bool> HasFriendAsync(string userName, string friend)
+            => await databaseContext.HasFriendAsync(userName, friend);
+
+        public static async Task<bool> AcceptOrderAsync(string? order, string userName)
+            => await databaseContext.AcceptOrderAsync(order, userName);
     }
 }

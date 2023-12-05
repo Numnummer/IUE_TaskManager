@@ -100,6 +100,28 @@ namespace NtTaskWebServer.Controller
             }
             await WebHelper.Send400Async(context, "not increased");
         }
+
+        [NeedAuth(Role.Owner)]
+        public async Task PostFriendDashboardAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var friend = await JsonSerializer.DeserializeAsync<string>(requestStream);
+            var userName = SessionHelper.GetUserName(context);
+            if (friend==null || userName==null)
+            {
+                await WebHelper.Send400Async(context, "friend or user invalid");
+                return;
+            }
+            if (!await DatabaseHelper.HasFriendAsync(userName, friend))
+            {
+                await WebHelper.Send400Async(context, $"{userName} and {friend} not friends");
+                return;
+            }
+            WebHelper.DeleteSession(context);
+            //WebHelper.SendSession(context, friend, Role.Reader);
+            var cookie = SessionHelper.MakeSessionCookie(friend, Role.Reader);
+            await WebHelper.SendJsonObjectAsync(context, cookie);
+        }
     }
 }
 

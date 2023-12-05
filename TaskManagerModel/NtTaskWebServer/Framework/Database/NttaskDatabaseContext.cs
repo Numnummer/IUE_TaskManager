@@ -148,5 +148,23 @@ namespace NtTaskWebServer.Framework.Database
             var reader = await ExecuteReaderAsync(connection, commandText);
             return await UserNamesBuilder.BuildUserNamesByDataReaderAsync(reader);
         }
+
+        public async Task<bool> AcceptOrderAsync(string? order, string userName)
+        {
+            var commands = new string[]
+            {
+                $"delete from \"order\" where user_name = '{order}' and friend_name ='{userName}'",
+                $"insert into friends values ('{userName}','{order}')",
+                $"insert into friends values ('{order}','{userName}')"
+            };
+            return await ExecuteTransactionAsync(commands);
+        }
+
+        public async Task<bool> HasFriendAsync(string userName, string friend)
+        {
+            var commandText = $"select 1 from \"friends\"" +
+                $" where user_name = '{userName}' and friend_name='{friend}'";
+            return ExecuteScalarAsync(commandText)!=null;
+        }
     }
 }

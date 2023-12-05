@@ -36,16 +36,21 @@ namespace NtTaskWebServer.Framework.Helpers
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public static void SendSession(HttpListenerContext context, string userName)
+        public static void SendSession(HttpListenerContext context, string userName, Role role)
         {
-            var role = Role.Owner;
             var cookie = SessionHelper.MakeSessionCookie(userName, role);
             context.Response.Cookies.Add(cookie);
         }
 
         public static void UpdateSession(HttpListenerContext context)
         {
-            context.Request.Cookies["session"].Expires=DateTime.UtcNow.AddMinutes(SessionHelper.CookieLifetimeMinutes);
+            var cookie = SessionHelper.GetCookie(context);
+            if (cookie==null)
+            {
+                return;
+            }
+            cookie.Expires = DateTime.UtcNow.AddMinutes(SessionHelper.CookieLifetimeMinutes);
+            context.Response.SetCookie(cookie);
         }
 
         public static void Send401(HttpListenerContext context)
@@ -69,7 +74,9 @@ namespace NtTaskWebServer.Framework.Helpers
             }
             if (SessionHelper.RemoveCookie(sessionCookie))
             {
-                sessionCookie.Expires = DateTime.Now.AddDays(-1);
+                var cookie = SessionHelper.GetCookie(context);
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                context.Response.SetCookie(cookie);
             }
         }
 

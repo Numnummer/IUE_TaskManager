@@ -53,7 +53,7 @@ function ProcessOrder(order) {
 }
 
 function ProcessFriend(friend) {
-    document.getElementById("friendsList").innerHTML += "<li class=\"userList\">" + friend + "</li>";
+    document.getElementById("friendsList").innerHTML += "<li class=\"userList\">" + "<button type=\"button\" onclick=\"GoToFriendDashboard(this)\">" + friend + "</button>" + "</li>";
 }
 
 function SendOrder(button) {
@@ -109,4 +109,58 @@ function UpdateAllFriends() {
             console.log('Failed: ' + error);
         }
     });
+}
+
+function AcceptOrder(button) {
+    $.ajax({
+        type: 'POST',
+        url: 'UserProfile/AcceptOrder',
+        data: JSON.stringify(button.innerHTML),
+        success: function (response) {
+            if (response == "ok") {
+                UpdateAllFriends();
+            }
+        },
+        error: function (xhr, status, error) {
+            document.getElementById("operationResult").innerHTML = error;
+            console.log('Failed: ' + error);
+        }
+    });
+}
+
+function GoToFriendDashboard(button) {
+    console.log(button.innerHTML);
+    $.ajax({
+        type: 'POST',
+        url: 'Dashboard/FriendDashboard',
+        data: JSON.stringify(button.innerHTML),
+        success: function (response) {
+            var json = JSON.stringify(response);
+            var cookie = JSON.parse(json);
+            setCookie(cookie.Name, cookie.Value, 30);
+            window.location = "Dashboard";
+        },
+        error: function (xhr, status, error) {
+            document.getElementById("operationResult").innerHTML = error;
+            console.log('Failed: ' + error);
+        }
+    });
+}
+
+function ExitFromAccount() {
+    $.post('Dashboard/ExitFromAccount', function (response) {
+        if (response == "ok") {
+            window.location = "StartPage";
+        }
+    }).fail(function (error) {
+        console.error('Ошибка:', error);
+        // Обрабатывайте ошибку...
+    });
+}
+
+function setCookie(cookieName, cookieValue, expirationMinutes) {
+    var d = new Date();
+    d.setTime(d.getTime() + (expirationMinutes * 60 * 1000));  // Convert minutes to milliseconds
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
 }

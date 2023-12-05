@@ -36,5 +36,33 @@ namespace NtTaskWebServer.Framework.Database
             return await command.ExecuteReaderAsync();
         }
 
+        protected async Task<bool> ExecuteTransactionAsync(string[] commands)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var commandList = new List<NpgsqlCommand>();
+                foreach (var command in commands)
+                {
+                    commandList.Add(new NpgsqlCommand(command, connection));
+                }
+                foreach (var command in commandList)
+                {
+                    if (await command.ExecuteNonQueryAsync()==0)
+                    {
+                        throw new Exception();
+                    }
+                }
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+            return true;
+        }
     }
 }

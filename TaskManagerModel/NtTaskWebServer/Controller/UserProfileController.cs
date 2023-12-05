@@ -59,6 +59,11 @@ namespace NtTaskWebServer.Controller
                 return;
             }
             var userName = SessionHelper.GetUserName(context);
+            if (friendName==userName)
+            {
+                await WebHelper.Send400Async(context, "cannot add self as friend");
+                return;
+            }
             if (await DatabaseHelper.AddOrderAsync(userName, friendName))
             {
                 await WebHelper.SendOkAsync(context, "add");
@@ -91,6 +96,27 @@ namespace NtTaskWebServer.Controller
             }
             var orders = await DatabaseHelper.GetFriendsAsync(userName);
             await WebHelper.SendJsonObjectAsync(context, orders);
+        }
+
+        [NeedAuth(Role.Owner)]
+        public async Task PostAcceptOrderAsync(HttpListenerContext context)
+        {
+            using var stream = context.Request.InputStream;
+            var order = await JsonSerializer.DeserializeAsync<string>(stream);
+
+            var userName = SessionHelper.GetUserName(context);
+            if (string.IsNullOrEmpty(userName))
+            {
+                await WebHelper.Send400Async(context, "user not valid");
+                return;
+            }
+
+            if (await DatabaseHelper.AcceptOrderAsync(order, userName))
+            {
+                await WebHelper.SendOkAsync(context, "ok");
+                return;
+            }
+            await WebHelper.Send400Async(context, "cannot accept");
         }
     }
 }

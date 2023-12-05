@@ -16,12 +16,12 @@ namespace NtTaskWebServer.Framework.Helpers
         public const byte CookieLifetimeMinutes = 30;
         public static bool IsSessionExist(string session, CookieCollection cookies)
         {
+            if (string.IsNullOrWhiteSpace(session)) return false;
             var splitSession = session.Split(' ');
             var sessionId = Guid.Parse(splitSession[0]);
-            var userName = splitSession[1];
-            if (memoryCache.TryGetValue(userName, out var actualSessionId))
+            if (memoryCache.TryGetValue(sessionId, out var cookie))
             {
-                if (sessionId == (actualSessionId as Guid?))
+                if (sessionId == Guid.Parse((cookie as Cookie).Value.Split(' ')[0]))
                 {
                     return true;
                 }
@@ -31,21 +31,22 @@ namespace NtTaskWebServer.Framework.Helpers
         public static Cookie MakeSessionCookie(string userName, Role role)
         {
             var sessionId = Guid.NewGuid();
-            memoryCache.Set(userName, sessionId);
             var value = new UserData(userName, sessionId, role);
-            return new Cookie()
+            var cookie = new Cookie()
             {
                 Name = "session",
                 Value = value.ToString(),
                 Expires = DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
             };
+            memoryCache.Set(sessionId, cookie);
+            return cookie;
         }
 
         public static bool RemoveCookie(Cookie cookie)
         {
-            var userName = cookie.Value.Split(' ')[1];
-            memoryCache.Remove(userName);
-            return memoryCache.TryGetValue(userName, out _);
+            var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
+            memoryCache.Remove(userId);
+            return memoryCache.TryGetValue(userId, out _);
         }
         public static string? GetUserName(HttpListenerContext context)
         {
@@ -58,6 +59,13 @@ namespace NtTaskWebServer.Framework.Helpers
             {
                 return null;
             }
+        }
+
+        public static Cookie? GetCookie(HttpListenerContext context)
+        {
+            var cookie = context.Request.Cookies["session"];
+            var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
+            return memoryCache.Get(userId) as Cookie;
         }
     }
 }

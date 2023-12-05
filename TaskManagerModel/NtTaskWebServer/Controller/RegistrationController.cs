@@ -26,7 +26,7 @@ namespace NtTaskWebServer.Controller
             var isDataWritten = await DatabaseHelper.WriteLoginDataAsync(loginData);
             if (isDataWritten)
             {
-                WebHelper.SendSession(context, loginData.UserName);
+                WebHelper.SendSession(context, loginData.UserName, Role.Owner);
                 await WebHelper.SendOkAsync(context, "User accepted");
             }
             else
