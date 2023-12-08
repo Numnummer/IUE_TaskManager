@@ -55,13 +55,13 @@ namespace NtTaskWebServer.Controller
             var friendName = await JsonSerializer.DeserializeAsync<string>(stream);
             if (friendName == null)
             {
-                await WebHelper.Send400Async(context, "user name not valid");
+                await WebHelper.Send400Async(context, "не валидный пользователь");
                 return;
             }
             var userName = SessionHelper.GetUserName(context);
             if (friendName==userName)
             {
-                await WebHelper.Send400Async(context, "cannot add self as friend");
+                await WebHelper.Send400Async(context, "Нельзя добавить себя в друзья");
                 return;
             }
             if (await DatabaseHelper.AddOrderAsync(userName, friendName))
@@ -69,7 +69,7 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.SendOkAsync(context, "add");
                 return;
             }
-            await WebHelper.Send400Async(context, "cannot add");
+            await WebHelper.Send400Async(context, "Не удалось отправить заявку");
         }
 
         [NeedAuth(Role.Reader)]
@@ -78,7 +78,7 @@ namespace NtTaskWebServer.Controller
             var userName = SessionHelper.GetUserName(context);
             if (string.IsNullOrEmpty(userName))
             {
-                await WebHelper.Send400Async(context, "user not valid");
+                await WebHelper.Send400Async(context, "не валидный пользователь");
                 return;
             }
             var orders = await DatabaseHelper.GetOrdersAsync(userName);
@@ -91,7 +91,7 @@ namespace NtTaskWebServer.Controller
             var userName = SessionHelper.GetUserName(context);
             if (string.IsNullOrEmpty(userName))
             {
-                await WebHelper.Send400Async(context, "user not valid");
+                await WebHelper.Send400Async(context, "не валидный пользователь");
                 return;
             }
             var orders = await DatabaseHelper.GetFriendsAsync(userName);
@@ -107,7 +107,7 @@ namespace NtTaskWebServer.Controller
             var userName = SessionHelper.GetUserName(context);
             if (string.IsNullOrEmpty(userName))
             {
-                await WebHelper.Send400Async(context, "user not valid");
+                await WebHelper.Send400Async(context, "не валидный пользователь");
                 return;
             }
 
@@ -116,7 +116,7 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.SendOkAsync(context, "ok");
                 return;
             }
-            await WebHelper.Send400Async(context, "cannot accept");
+            await WebHelper.Send400Async(context, "Не удалось принять заявку");
         }
     }
 }

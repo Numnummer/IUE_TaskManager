@@ -21,13 +21,14 @@ function addTask() {
                 }
             },
             error: function (xhr, status, error) {
-                // Handle error response
-                console.log('Failed: ' + error);
+                hideForm();
+                openErrWindow(xhr.responseText);
             }
         });
     }
     else {
-        console.log("Invalid data");
+        hideForm();
+        openErrWindow("Не валидная таска");
     }
 }
 
@@ -68,10 +69,12 @@ function RemoveTaskCard(button) {
             if (response == "removed") {
                 UpdateAllTasks();
             }
+            else {
+                openForm(response);
+            }
         },
         error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
+            openForm(xhr.responseText);
         }
     });
 }

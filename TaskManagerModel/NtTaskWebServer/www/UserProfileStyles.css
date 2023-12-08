@@ -88,3 +88,7 @@ button {
         padding: 10px;
     }
 }
+
+#operationResult {
+    color: white;
+}

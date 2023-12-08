@@ -71,7 +71,7 @@ function SendOrder(button) {
             }
         },
         error: function (xhr, status, error) {
-            document.getElementById("operationResult").innerHTML = error;
+            document.getElementById("operationResult").innerHTML = xhr.responseText;
             console.log('Failed: ' + error);
         }
     });
@@ -90,7 +90,7 @@ function UpdateAllFriends() {
             orders.forEach(order => ProcessOrder(order));
         },
         error: function (xhr, status, error) {
-            //document.getElementById("operationResult").innerHTML = error;
+            document.getElementById("operationResult").innerHTML = xhr.responseText;
             console.log('Failed: ' + error);
         }
     });
@@ -105,7 +105,7 @@ function UpdateAllFriends() {
             friends.forEach(friend => ProcessFriend(friend));
         },
         error: function (xhr, status, error) {
-            document.getElementById("operationResult").innerHTML = error;
+            document.getElementById("operationResult").innerHTML = xhr.responseText;
             console.log('Failed: ' + error);
         }
     });
@@ -122,7 +122,7 @@ function AcceptOrder(button) {
             }
         },
         error: function (xhr, status, error) {
-            document.getElementById("operationResult").innerHTML = error;
+            document.getElementById("operationResult").innerHTML = xhr.responseText;
             console.log('Failed: ' + error);
         }
     });
@@ -141,20 +141,34 @@ function GoToFriendDashboard(button) {
             window.location = "Dashboard";
         },
         error: function (xhr, status, error) {
-            document.getElementById("operationResult").innerHTML = error;
+            document.getElementById("operationResult").innerHTML = xhr.responseText;
             console.log('Failed: ' + error);
         }
     });
 }
 
 function ExitFromAccount() {
-    $.post('Dashboard/ExitFromAccount', function (response) {
-        if (response == "ok") {
-            window.location = "StartPage";
+    //$.post('Dashboard/ExitFromAccount', function (response) {
+    //    if (response == "ok") {
+    //        window.location = "StartPage";
+    //    }
+    //}).fail(function (error) {
+    //    openErrWindow(error);
+    //});
+    $.ajax({
+        type: 'POST',
+        url: 'Dashboard/ExitFromAccount',
+        success: function (response) {
+            if (response == "ok") {
+                window.location = "StartPage";
+            }
+            else {
+                openErrWindow(response);
+            }
+        },
+        error: function (xhr, status, error) {
+            openErrWindow(xhr.responseText);
         }
-    }).fail(function (error) {
-        console.error('Ошибка:', error);
-        // Обрабатывайте ошибку...
     });
 }
 

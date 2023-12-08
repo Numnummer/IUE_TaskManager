@@ -6,6 +6,7 @@
     <title>NtTask</title>
     <link rel="stylesheet" type="text/css" href="www/StartPageStyles.css">
     <link rel="stylesheet" type="text/css" href="www/DashboardStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/ErrorHandlerStyles.css">
     <link rel="shortcut icon" href="www/favicon.ico" type="image/x-icon" />
 </head>
 
@@ -33,6 +34,12 @@
             <label id="errorLabel"></label>
         </form>
     </div>
+
+    <div id="errorWindow">
+        <button onclick="hideErrWindow()">X</button>
+        <label id="errorText" class="labelText"></label>
+    </div>
+
 
     <div class="pageHeader">
         <button class="classicButton">Помощь</button>
@@ -73,3 +80,4 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="www/DashboardScripts.js"></script>
 <script src="www/TaskCardScripts.js"></script>
+<script src="www/ErrorHandlerScripts.js"></script>

@@ -73,7 +73,7 @@ namespace NtTaskWebServer.Controller
             }
             else
             {
-                await WebHelper.Send400Async(context, "cannot remove");
+                await WebHelper.Send400Async(context, "нельзя удалить");
             }
         }
 
@@ -109,16 +109,15 @@ namespace NtTaskWebServer.Controller
             var userName = SessionHelper.GetUserName(context);
             if (friend==null || userName==null)
             {
-                await WebHelper.Send400Async(context, "friend or user invalid");
+                await WebHelper.Send400Async(context, "Hе валидное имя друга или пользователя");
                 return;
             }
             if (!await DatabaseHelper.HasFriendAsync(userName, friend))
             {
-                await WebHelper.Send400Async(context, $"{userName} and {friend} not friends");
+                await WebHelper.Send400Async(context, $"{userName} и {friend} не друзья");
                 return;
             }
             WebHelper.DeleteSession(context);
-            //WebHelper.SendSession(context, friend, Role.Reader);
             var cookie = SessionHelper.MakeSessionCookie(friend, Role.Reader);
             await WebHelper.SendJsonObjectAsync(context, cookie);
         }

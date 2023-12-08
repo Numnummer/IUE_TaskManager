@@ -30,7 +30,7 @@ namespace NtTaskWebServer.Controller
             }
             else
             {
-                await WebHelper.SendOkAsync(context, "Failed");
+                await WebHelper.Send400Async(context, "Не корректные данные для входа");
             }
         }
     }

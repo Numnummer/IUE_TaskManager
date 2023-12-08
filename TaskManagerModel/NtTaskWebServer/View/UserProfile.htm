@@ -7,10 +7,16 @@
     <link rel="stylesheet" type="text/css" href="www/StartPageStyles.css">
     <link rel="stylesheet" type="text/css" href="www/DashboardStyles.css">
     <link rel="stylesheet" type="text/css" href="www/UserProfileStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/ErrorHandlerStyles.css">
     <link rel="shortcut icon" href="www/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
+
+    <div id="errorWindow">
+        <button onclick="hideErrWindow()">X</button>
+        <label id="errorText" class="labelText"></label>
+    </div>
 
     <div id="friendForm">
         <button onclick="hideForm()">X</button>
@@ -58,3 +64,4 @@
 </html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="www/UserProfileScripts.js"></script>
+<script src="www/ErrorHandlerScripts.js"></script>
