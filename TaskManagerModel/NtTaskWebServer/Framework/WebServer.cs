@@ -22,7 +22,6 @@ namespace NtTaskWebServer.Framework
             while (!cancellationToken.IsCancellationRequested)
             {
                 var context = await _listener.GetContextAsync();
-                //await Router.RouteAsync(context);
                 await MiddlewareRunner.RunMiddleware(context);
                 Console.WriteLine(cancellationToken.IsCancellationRequested);
             }

@@ -1,10 +1,11 @@
 ﻿using NtTaskWebServer.Framework;
+using System.Configuration;
 
 var app = new WebServer();
 var cts = new CancellationTokenSource();
 try
 {
-    _=app.ListenAsync("http://127.0.0.1:5051/", cts.Token);
+    _=app.ListenAsync(ConfigurationManager.AppSettings["DefaultPrefix"], cts.Token);
 }
 catch (Exception exception)
 {
