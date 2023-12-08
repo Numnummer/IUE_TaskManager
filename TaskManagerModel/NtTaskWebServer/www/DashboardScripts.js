@@ -79,7 +79,11 @@ function ProcessTask(task, card) {
 function ShowTaskCard(currentCard, column, task) {
     document.getElementById(column).innerHTML += currentCard;
     document.getElementById("name" + task.Id).innerHTML = task.Name;
-    document.getElementById("deadline" + task.Id).innerHTML = task.Deadline;
+    const originalDate = new Date(task.Deadline);
+    const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
+    const formatter = new Intl.DateTimeFormat('ru-RU', options);
+    const formattedDate = formatter.format(originalDate);
+    document.getElementById("deadline" + task.Id).innerHTML = "Дедлайн: " + formattedDate;
 }
 
 function ClearTasks() {
