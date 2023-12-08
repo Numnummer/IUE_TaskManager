@@ -45,7 +45,10 @@ namespace TaskManagerModel
             if (_tasks.TryGetValue(taskId, out var task))
             {
                 task.Status=status;
-                TaskUpdated(task);
+                if (status!=TaskStatus.Expired)
+                {
+                    TaskUpdated(task);
+                }
                 return true;
             }
             return false;
@@ -95,7 +98,7 @@ namespace TaskManagerModel
         {
             if (_tasks.TryGetValue(taskId, out var task))
             {
-                if (task.Deadline<=DateTimeOffset.UtcNow)
+                if (task.Status!=TaskStatus.Expired && task.Deadline<=DateTimeOffset.UtcNow)
                 {
                     task.Status=TaskStatus.Expired;
                     TaskUpdated(task);
@@ -109,7 +112,7 @@ namespace TaskManagerModel
         {
             foreach (var pair in _tasks)
             {
-                if (pair.Value.Deadline<=DateTimeOffset.UtcNow)
+                if (pair.Value.Status!=TaskStatus.Expired && pair.Value.Deadline<=DateTimeOffset.UtcNow)
                 {
                     pair.Value.Status=TaskStatus.Expired;
                     TaskUpdated(pair.Value);

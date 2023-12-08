@@ -28,6 +28,7 @@ namespace NtTaskWebServer.Controller
             {
                 WebHelper.SendSession(context, loginData.UserName, Role.Owner);
                 await WebHelper.SendOkAsync(context, "User accepted");
+                await MailHelper.SendEmail(loginData.Email, "NtTask Registration", $"Вы зарегистрировались под именем {loginData.UserName}");
             }
             else
             {
