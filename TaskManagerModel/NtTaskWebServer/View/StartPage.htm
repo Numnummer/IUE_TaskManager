@@ -5,14 +5,20 @@
     <meta charset="utf-8">
     <title>NtTask</title>
     <link rel="stylesheet" type="text/css" href="www/StartPageStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/ErrorHandlerStyles.css">
     <link rel="shortcut icon" href="www/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
     <div class="pageHeader">
-        <button class="classicButton" onclick="about()">About</button>
+        <button class="classicButton" onclick="openHelpWindow()">About</button>
         <button class="classicButton" onclick="registrate()">Зарегистрироваться</button>
         <button class="classicButton" onclick="enter()">Войти</button>
+
+        <div id="helpWindow">
+            <button onclick="hideHelpWindow()">X</button>
+            <label id="helpText" class="labelText">TODO: Написать инфо о сайте</label>
+        </div>
 
     </div>
     <h1>
@@ -21,5 +27,6 @@
 </body>
 
 <script src="www/StartPageScripts.js"></script>
+<script src="www/ErrorHandlerScripts.js"></script>
 
 </html>

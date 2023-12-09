@@ -18,6 +18,11 @@
         <label id="errorText" class="labelText"></label>
     </div>
 
+    <div id="helpWindow">
+        <button onclick="hideHelpWindow()">X</button>
+        <label id="helpText" class="labelText">TODO: Написать инструкцию по пользованию</label>
+    </div>
+
     <div id="friendForm">
         <button onclick="hideForm()">X</button>
         <form class="task">
@@ -36,7 +41,7 @@
     </div>
 
     <div class="pageHeader">
-        <button class="classicButton">Помощь</button>
+        <button class="classicButton" onclick="openHelpWindow()">Помощь</button>
         <button class="classicButton" onclick="ToBoard()">Доска</button>
         <button class="classicButton" onclick="ExitFromAccount()">Выйти с аккаунта</button>
     </div>

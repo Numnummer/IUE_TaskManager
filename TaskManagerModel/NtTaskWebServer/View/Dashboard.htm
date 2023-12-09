@@ -40,9 +40,14 @@
         <label id="errorText" class="labelText"></label>
     </div>
 
+    <div id="helpWindow">
+        <button onclick="hideHelpWindow()">X</button>
+        <label id="helpText" class="labelText">TODO: Написать инструкцию по пользованию</label>
+    </div>
+
 
     <div class="pageHeader">
-        <button class="classicButton">Помощь</button>
+        <button class="classicButton" onclick="openHelpWindow()">Помощь</button>
         <button class="classicButton" onclick="ToProfile()">Профиль</button>
         <button class="classicButton" onclick="ExitFromAccount()">Выйти с аккаунта</button>
     </div>
