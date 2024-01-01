@@ -9,8 +9,8 @@ namespace NtTaskWebServer.Framework.Middleware
 {
     public abstract class Middleware
     {
-        protected Middleware _successor;
-        public Middleware(Middleware successor)
+        protected Middleware? _successor;
+        public Middleware(Middleware? successor)
         {
             _successor=successor;
         }

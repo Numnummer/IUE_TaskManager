@@ -12,7 +12,7 @@ namespace NtTaskWebServer.Framework.Middleware
 {
     public class InvokerMiddleware : Middleware
     {
-        public InvokerMiddleware(Middleware successor) : base(successor) { }
+        public InvokerMiddleware(Middleware? successor) : base(successor) { }
 
         private bool CanCallController(MethodInfo method)
         {
