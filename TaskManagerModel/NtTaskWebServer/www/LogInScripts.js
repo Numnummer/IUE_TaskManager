@@ -15,7 +15,8 @@ function enter() {
         data: JSON.stringify(loginData),
         success: function (response) {
             if (response == "User accepted") {
-                window.location = "Dashboard";
+                localStorage.setItem("user_name", loginData.UserName);
+                window.location = "EmailAuth";
             }
             else {
                 document.getElementById("errorLabel").innerHTML = response;

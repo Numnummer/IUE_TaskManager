@@ -22,6 +22,5 @@ namespace NtTaskWebServer.Framework.Helpers
                 return Convert.ToBase64String(hash);
             }
         }
-
     }
 }

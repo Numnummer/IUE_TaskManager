@@ -11,6 +11,17 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class WebHelper
     {
+        public static readonly Dictionary<string, int> UserCode = new();
+        public static string? GetCode(string userName)
+        {
+            Random random = new Random();
+            int code = random.Next(100000, 999999);
+            if (UserCode.TryAdd(userName, code))
+            {
+                return code.ToString();
+            }
+            return null;
+        }
         public static async Task Send400Async(HttpListenerContext context, string message)
         {
             context.Response.StatusCode = 400;
