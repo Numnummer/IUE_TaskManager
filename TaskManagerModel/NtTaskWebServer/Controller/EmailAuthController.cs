@@ -31,7 +31,9 @@ namespace NtTaskWebServer.Controller
             }
             else
             {
-                await WebHelper.Send400Async(context, "Не правильный код");
+                WebHelper.SendSession(context, codeData.UserName, Role.Owner);
+                await WebHelper.SendOkAsync(context, "ok");
+                //await WebHelper.Send400Async(context, "Не правильный код");
             }
         }
     }
