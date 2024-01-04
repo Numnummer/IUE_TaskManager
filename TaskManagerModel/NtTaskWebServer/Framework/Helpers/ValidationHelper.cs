@@ -44,8 +44,8 @@ namespace NtTaskWebServer.Framework.Helpers
 
         public static bool IsValidCodeData(CodeData? codeData)
             => codeData!=null
-                && string.IsNullOrWhiteSpace(codeData.Code)
-                && string.IsNullOrWhiteSpace(codeData.UserName)
+                && !string.IsNullOrWhiteSpace(codeData.Code)
+                && !string.IsNullOrWhiteSpace(codeData.UserName)
                 && codeData.Code.Length == CodeLength
                 && int.TryParse(codeData.Code, out var _);
     }

@@ -7,46 +7,189 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using TaskManagerModel;
+using static Npgsql.PostgresTypes.PostgresCompositeType;
+using Task = System.Threading.Tasks.Task;
 
 namespace NtTaskWebServer.Framework.Helpers
 {
-    //TODO: обернуть методы в try catch
+
     public static class DatabaseHelper
     {
         private static readonly NttaskDatabaseContext databaseContext = new();
         public static async Task<bool> WriteLoginDataAsync(LoginData? loginData)
-            => await databaseContext.WriteLoginDataAsync(loginData);
+        {
+            try
+            {
+                return await databaseContext.WriteLoginDataAsync(loginData);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
 
         public static async Task<bool> IsLoginDataExistAsync(LoginData? loginData)
-            => await databaseContext.IsLoginDataExistAsync(loginData);
+        {
+            try
+            {
+                return await databaseContext.IsLoginDataExistAsync(loginData);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
 
-        public static async Task<LoginData> GetUserDataAsync(string name)
-            => await databaseContext.GetUserDataAsync(name);
+        public static async Task<LoginData?> GetUserDataAsync(string name)
+        {
+            try
+            {
+                return await databaseContext.GetUserDataAsync(name);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return null;
+            }
+        }
 
         public static async Task<bool> WriteTaskAsync(string userName, TaskManagerModel.Task taskData)
-            => await databaseContext.WriteTaskAsync(userName, taskData);
-        public static async Task<TaskManagerModel.Task[]> GetTaskDataAsync(string userName)
-            => await databaseContext.GetTaskDataAsync(userName);
+        {
+            try
+            {
+                return await databaseContext.WriteTaskAsync(userName, taskData);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
+        public static async Task<TaskManagerModel.Task[]?> GetTaskDataAsync(string userName)
+        {
+            try
+            {
+                return await databaseContext.GetTaskDataAsync(userName);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return null;
+            }
+        }
         public static async Task UpdateTask(TaskManagerModel.Task task)
-            => await databaseContext.UpdateTask(task);
+        {
+            try
+            {
+                await databaseContext.UpdateTask(task);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+            }
+        }
 
         public static async Task<bool> RemoveTaskAsync(string userName, Guid id)
-            => await databaseContext.RemoveTaskAsync(userName, id);
+        {
+            try
+            {
+                return await databaseContext.RemoveTaskAsync(userName, id);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
         public static async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
-            => await databaseContext.SetTaskStatusAsync(userName, id, status);
-        public static async Task<string[]> GetUsersAsync(string prompt)
-            => await databaseContext.GetUsersAsync(prompt);
+        {
+            try
+            {
+                return await databaseContext.SetTaskStatusAsync(userName, id, status);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
+        public static async Task<string[]?> GetUsersAsync(string prompt)
+        {
+            try
+            {
+                return await databaseContext.GetUsersAsync(prompt);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return null;
+            }
+        }
         public static async Task<bool> AddOrderAsync(string userName, string friendName)
-            => await databaseContext.AddOrderAsync(userName, friendName);
+        {
+            try
+            {
+                return await databaseContext.AddOrderAsync(userName, friendName);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
 
-        public static async Task<string[]> GetOrdersAsync(string userName)
-            => await databaseContext.GetOrdersAsync(userName);
-        public static async Task<string[]> GetFriendsAsync(string userName)
-            => await databaseContext.GetFriendsAsync(userName);
+        public static async Task<string[]?> GetOrdersAsync(string userName)
+        {
+            try
+            {
+                return await databaseContext.GetOrdersAsync(userName);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return null;
+            }
+        }
+        public static async Task<string[]?> GetFriendsAsync(string userName)
+        {
+            try
+            {
+                return await databaseContext.GetFriendsAsync(userName);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return null;
+            }
+        }
         public static async Task<bool> HasFriendAsync(string userName, string friend)
-            => await databaseContext.HasFriendAsync(userName, friend);
+        {
+            try
+            {
+                return await databaseContext.HasFriendAsync(userName, friend);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
 
         public static async Task<bool> AcceptOrderAsync(string? order, string userName)
-            => await databaseContext.AcceptOrderAsync(order, userName);
+        {
+            try
+            {
+                return await databaseContext.AcceptOrderAsync(order, userName);
+            }
+            catch (Exception exception)
+            {
+                await Console.Out.WriteLineAsync(exception.Message);
+                return false;
+            }
+        }
     }
 }

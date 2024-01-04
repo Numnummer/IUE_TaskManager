@@ -17,10 +17,18 @@ namespace NtTaskWebServer.Framework.Middleware
             await Task.Run(async () =>
             {
                 var rawUrlName = context.Request.RawUrl.Trim('/');
-                if (rawUrlName[..3]=="www")
+                try
                 {
-                    await RouteWwwAsync(context, rawUrlName);
+                    if (rawUrlName[..3]=="www")
+                    {
+                        await RouteWwwAsync(context, rawUrlName);
+                    }
                 }
+                catch (Exception exception)
+                {
+                    await Console.Out.WriteLineAsync(exception.Message);
+                }
+
                 MakeActionAndControllerUrls(rawUrlName, out var controllerUrl, out var actionUrl);
                 RouteRequests(context, controllerUrl, actionUrl);
             });
