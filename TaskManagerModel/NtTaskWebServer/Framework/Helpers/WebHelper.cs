@@ -50,7 +50,10 @@ namespace NtTaskWebServer.Framework.Helpers
         public static void SendSession(HttpListenerContext context, string userName, Role role)
         {
             var cookie = SessionHelper.MakeSessionCookie(userName, role);
-            context.Response.Cookies.Add(cookie);
+            cookie.Domain="127.0.0.1";
+            cookie.Path="/";
+            cookie.HttpOnly = true;
+            context.Response.SetCookie(cookie);
         }
 
         public static void UpdateSession(HttpListenerContext context)

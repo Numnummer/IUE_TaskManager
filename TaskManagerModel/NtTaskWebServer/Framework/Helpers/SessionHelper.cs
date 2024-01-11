@@ -11,7 +11,7 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class SessionHelper
     {
-        private static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
+        private static readonly Dictionary<Guid, Cookie> _sessions = new();
 
         public const byte CookieLifetimeMinutes = 30;
         public static bool IsSessionExist(string session, CookieCollection cookies)
@@ -19,7 +19,7 @@ namespace NtTaskWebServer.Framework.Helpers
             if (string.IsNullOrWhiteSpace(session)) return false;
             var splitSession = session.Split(' ');
             var sessionId = Guid.Parse(splitSession[0]);
-            if (memoryCache.TryGetValue(sessionId, out var cookie))
+            if (_sessions.TryGetValue(sessionId, out var cookie))
             {
                 if (sessionId == Guid.Parse((cookie as Cookie).Value.Split(' ')[0]))
                 {
@@ -36,17 +36,17 @@ namespace NtTaskWebServer.Framework.Helpers
             {
                 Name = "session",
                 Value = value.ToString(),
-                Expires = DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
+                Expires = DateTime.Now.AddMinutes(CookieLifetimeMinutes)
             };
-            memoryCache.Set(sessionId, cookie);
+            _sessions.Add(sessionId, cookie);
             return cookie;
         }
 
         public static bool RemoveCookie(Cookie cookie)
         {
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            memoryCache.Remove(userId);
-            return memoryCache.TryGetValue(userId, out _);
+            _sessions.Remove(userId);
+            return _sessions.TryGetValue(userId, out _);
         }
         public static string? GetUserName(HttpListenerContext context)
         {
@@ -65,7 +65,7 @@ namespace NtTaskWebServer.Framework.Helpers
         {
             var cookie = context.Request.Cookies["session"];
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            return memoryCache.Get(userId) as Cookie;
+            return _sessions[userId];
         }
     }
 }

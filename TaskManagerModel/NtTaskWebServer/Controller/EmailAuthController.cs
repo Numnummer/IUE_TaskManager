@@ -27,13 +27,12 @@ namespace NtTaskWebServer.Controller
                     && int.Parse(codeData.Code)==code)
             {
                 WebHelper.SendSession(context, codeData.UserName, Role.Owner);
+                WebHelper.UserCode.Remove(codeData.UserName);
                 await WebHelper.SendOkAsync(context, "ok");
             }
             else
             {
-                WebHelper.SendSession(context, codeData.UserName, Role.Owner);
-                await WebHelper.SendOkAsync(context, "ok");
-                //await WebHelper.Send400Async(context, "Не правильный код");
+                await WebHelper.Send400Async(context, "Не правильный код");
             }
         }
     }

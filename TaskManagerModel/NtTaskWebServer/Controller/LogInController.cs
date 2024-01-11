@@ -29,7 +29,7 @@ namespace NtTaskWebServer.Controller
                 try
                 {
                     var email = (await DatabaseHelper.GetUserDataAsync(loginData.UserName)).Email;
-                    //await MailHelper.SendEmail(email, "NtTask Enter", $"Вы вошли под именем {loginData.UserName}\nВаш код: {code}");
+                    await MailHelper.SendEmail(email, "NtTask Enter", $"Вы вошли под именем {loginData.UserName}\nВаш код: {code}");
                     await WebHelper.SendOkAsync(context, "User accepted");
                 }
                 catch (Exception e)
