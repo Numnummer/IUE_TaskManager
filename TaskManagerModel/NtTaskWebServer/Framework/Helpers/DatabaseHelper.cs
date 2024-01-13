@@ -138,6 +138,9 @@ namespace NtTaskWebServer.Framework.Helpers
             catch (Exception exception)
             {
                 await Console.Out.WriteLineAsync(exception.Message);
+                await Console.Out.WriteLineAsync(exception.Source);
+                await Console.Out.WriteLineAsync(exception.TargetSite?.Name);
+                await Console.Out.WriteLineAsync(exception.StackTrace);
                 return false;
             }
         }
