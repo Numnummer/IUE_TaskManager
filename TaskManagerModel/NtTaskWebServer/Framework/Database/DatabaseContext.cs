@@ -72,7 +72,7 @@ namespace NtTaskWebServer.Framework.Database
             return true;
         }
 
-        protected NpgsqlParameter[] MakeParameters(params (string?, string?)[] parametrs)
+        protected NpgsqlParameter[] MakeParameters(params (string?, object?)[] parametrs)
         {
             var result = new List<NpgsqlParameter>();
             foreach (var param in parametrs)

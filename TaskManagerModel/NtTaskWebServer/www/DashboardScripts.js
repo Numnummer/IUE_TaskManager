@@ -106,3 +106,11 @@ function ClearTasks() {
     document.getElementById("Done").innerHTML = "<div class=\"columnHeader\">Завершены</div > ";
     document.getElementById("Expired").innerHTML = "<div class=\"columnHeader\">Просрочены</div > ";
 }
+
+function allowDrop(event) {
+    console.log("allow");
+}
+
+function drop(event) {
+    console.log("drop");
+}

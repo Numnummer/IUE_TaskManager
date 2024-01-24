@@ -85,14 +85,14 @@ namespace NtTaskWebServer.Framework.Database
                 $"deadline=@Deadline,priority=@Priority," +
                 $" status=@Status" +
                 $"where tasks.id=@Id";
-            var tuples = new List<(string, string?)>()
+            var tuples = new List<(string, object?)>()
             {
                 ("@TaskName", task.Name),
-                ("@StartTime", task.StartTime.ToString()),
-                ("@Deadline", task.Deadline.ToString()),
-                ("@Priority", task.Priority.ToString()),
+                ("@StartTime", task.StartTime),
+                ("@Deadline", task.Deadline),
+                ("@Priority", (int)task.Priority),
                 ("@Status", task.Status.ToString()),
-                ("@Id", task.Id.ToString())
+                ("@Id", task.Id)
             };
             var parameters = MakeParameters(tuples.ToArray());
             await ExecuteNonQueryAsync(commandText, parameters);
@@ -102,14 +102,14 @@ namespace NtTaskWebServer.Framework.Database
             var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name,status)" +
                 $"values (@Id,@TaskName,@StartTime," +
                 $"@Deadline,@Priority,@UserName,@Status)";
-            var tuples = new List<(string, string?)>()
+            var tuples = new List<(string, object?)>()
             {
                 ("@TaskName", taskData.Name),
-                ("@StartTime", taskData.StartTime.ToString()),
-                ("@Deadline", taskData.Deadline.ToString()),
-                ("@Priority", taskData.Priority.ToString()),
+                ("@StartTime", taskData.StartTime),
+                ("@Deadline", taskData.Deadline),
+                ("@Priority", (int)taskData.Priority),
                 ("@Status", taskData.Status.ToString()),
-                ("@Id", taskData.Id.ToString()),
+                ("@Id", taskData.Id),
                 ("@UserName", username)
             };
             var parameters = MakeParameters(tuples.ToArray());
@@ -121,7 +121,7 @@ namespace NtTaskWebServer.Framework.Database
         {
             var commandText = $"delete from tasks where id = @Id" +
                 $" and user_name=@UserName";
-            var parameters = MakeParameters(("@Id", id.ToString()), ("@UserName", userName));
+            var parameters = MakeParameters(("@Id", id), ("@UserName", userName));
             var result = await ExecuteNonQueryAsync(commandText, parameters);
             return result > 0;
         }
@@ -130,7 +130,7 @@ namespace NtTaskWebServer.Framework.Database
         {
             var commandText = $"update tasks set status=@Status" +
                 $" where id=@Id and user_name=@UserName";
-            var parameters = MakeParameters(("@Status", status.ToString()), ("@UserName", userName), ("@Id", id.ToString()));
+            var parameters = MakeParameters(("@Status", status.ToString()), ("@UserName", userName), ("@Id", id));
             var result = await ExecuteNonQueryAsync(commandText, parameters);
             return result > 0;
         }

@@ -114,3 +114,7 @@ function IncreaseTaskStatus(button) {
         }
     });
 }
+
+function dragStart(event) {
+    console.log("start");
+}

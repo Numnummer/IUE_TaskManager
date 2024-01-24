@@ -1,4 +1,5 @@
-<div class="card" id="cardId">
+<div class="card" id="cardId" draggable="true"
+     ondragstart="dragStart(this.event)">
     <button onclick="RemoveTaskCard(this)">X</button>
     <div class="divRow">
         <button onclick="DecreaseTaskStatus(this)"><<</button>
