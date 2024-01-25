@@ -18,14 +18,23 @@ namespace NtTaskWebServer.Framework.Middleware
             {
                 var cookies = context.Request.Cookies;
                 var session = cookies["session"]?.Value;
-                if (session==null || !SessionHelper.IsSessionExist(session, cookies))
+                try
                 {
-                    WebSettings.IsAuthentificated=false;
+                    if (session==null || !SessionHelper.IsSessionExist(session, cookies))
+                    {
+                        WebSettings.IsAuthentificated=false;
+                    }
+                    else
+                    {
+                        WebSettings.IsAuthentificated=true;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    WebSettings.IsAuthentificated=true;
+
+                    throw;
                 }
+
             });
             if (_successor!=null)
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using NtTaskWebServer.Model;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +12,28 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class SessionHelper
     {
-        private static readonly Dictionary<Guid, Cookie> _sessions = new();
+        private static readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect("localhost");
+        private static readonly IDatabase _database = _redis.GetDatabase();
 
         public const byte CookieLifetimeMinutes = 30;
+
         public static bool IsSessionExist(string session, CookieCollection cookies)
         {
             if (string.IsNullOrWhiteSpace(session)) return false;
             var splitSession = session.Split(' ');
             var sessionId = Guid.Parse(splitSession[0]);
-            if (_sessions.TryGetValue(sessionId, out var cookie))
+            if (_database.KeyExists(sessionId.ToString()))
             {
-                if (sessionId == Guid.Parse((cookie as Cookie).Value.Split(' ')[0]))
+                var cookieValue = _database.StringGet(sessionId.ToString());
+                if (sessionId == Guid.Parse(cookieValue.ToString().Split(' ')[0]))
                 {
                     return true;
                 }
             }
             return false;
         }
-        public static Cookie MakeSessionCookie(string userName, Role role)
+
+        public static Cookie MakeSessionCookie(string userName, Model.Role role)
         {
             var sessionId = Guid.NewGuid();
             var value = new UserData(userName, sessionId, role);
@@ -38,16 +43,16 @@ namespace NtTaskWebServer.Framework.Helpers
                 Value = value.ToString(),
                 Expires = DateTime.Now.AddMinutes(CookieLifetimeMinutes)
             };
-            _sessions.Add(sessionId, cookie);
+            _database.StringSet(sessionId.ToString(), cookie.Value, expiry: TimeSpan.FromMinutes(CookieLifetimeMinutes));
             return cookie;
         }
 
         public static bool RemoveCookie(Cookie cookie)
         {
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            _sessions.Remove(userId);
-            return _sessions.TryGetValue(userId, out _);
+            return _database.KeyDelete(userId.ToString());
         }
+
         public static string? GetUserName(HttpListenerContext context)
         {
             try
@@ -65,7 +70,17 @@ namespace NtTaskWebServer.Framework.Helpers
         {
             var cookie = context.Request.Cookies["session"];
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            return _sessions[userId];
+            var cookieValue = _database.StringGet(userId.ToString());
+            if (!cookieValue.IsNull)
+            {
+                return new Cookie()
+                {
+                    Name = "session",
+                    Value = cookieValue.ToString(),
+                    Expires = DateTime.Now.AddMinutes(CookieLifetimeMinutes)
+                };
+            }
+            return null;
         }
     }
 }
