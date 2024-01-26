@@ -47,24 +47,25 @@ namespace NtTaskWebServer.Framework.Helpers
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public static void SendSession(HttpListenerContext context, string userName, Role role)
+        public static async Task SendSessionAsync(HttpListenerContext context, string userName, Role role)
         {
-            var cookie = SessionHelper.MakeSessionCookie(userName, role);
+            var cookie = await SessionHelper.MakeSessionCookieAsync(userName, role);
             cookie.Domain="127.0.0.1";
             cookie.Path="/";
             cookie.HttpOnly = true;
             context.Response.SetCookie(cookie);
         }
 
-        public static void UpdateSession(HttpListenerContext context)
+        public static async Task UpdateSessionAsync(HttpListenerContext context)
         {
-            var cookie = SessionHelper.GetCookie(context);
+            var cookie = await SessionHelper.GetCookieAsync(context);
             if (cookie==null)
             {
                 return;
             }
             cookie.Expires = DateTime.UtcNow.AddMinutes(SessionHelper.CookieLifetimeMinutes);
             context.Response.SetCookie(cookie);
+            await SessionHelper.UpdateSessionAsync(cookie);
         }
 
         public static void Send401(HttpListenerContext context)
@@ -79,16 +80,16 @@ namespace NtTaskWebServer.Framework.Helpers
             context.Response.Close();
         }
 
-        public static void DeleteSession(HttpListenerContext context)
+        public static async Task DeleteSessionAsync(HttpListenerContext context)
         {
             var sessionCookie = context.Request.Cookies["session"];
             if (sessionCookie == null)
             {
                 return;
             }
-            if (SessionHelper.RemoveCookie(sessionCookie))
+            if (await SessionHelper.RemoveCookieAsync(sessionCookie))
             {
-                var cookie = SessionHelper.GetCookie(context);
+                var cookie = await SessionHelper.GetCookieAsync(context);
                 cookie.Expires = DateTime.Now.AddDays(-1);
                 context.Response.SetCookie(cookie);
             }

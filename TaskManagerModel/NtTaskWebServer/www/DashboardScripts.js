@@ -8,16 +8,6 @@ function ToProfile() {
 }
 
 function ExitFromAccount() {
-    //$.post('Dashboard/ExitFromAccount', function (response) {
-    //    if (response == "ok") {
-    //        window.location = "StartPage";
-    //    }
-    //    else {
-    //        openErrWindow(response);
-    //    }
-    //}).fail(function (error) {
-    //    openErrWindow(error);
-    //});
     $.ajax({
         type: 'POST',
         url: 'Dashboard/ExitFromAccount',
@@ -108,9 +98,11 @@ function ClearTasks() {
 }
 
 function allowDrop(event) {
-    console.log("allow");
+    event.preventDefault();
 }
 
 function drop(event) {
-    console.log("drop");
+    event.preventDefault();
+    var data = event.dataTransfer.getData("id");
+    event.target.appendChild(document.getElementById(data));
 }

@@ -35,7 +35,7 @@ namespace NtTaskWebServer.Framework.Middleware
                     if (Enum.TryParse(typeof(Role), role, false, out var actualRole))
                     {
                         WebSettings.Role=(Role)actualRole;
-                        WebHelper.UpdateSession(context);
+                        await WebHelper.UpdateSessionAsync(context);
                         return;
                     }
                     await WebHelper.Send400Async(context, "Не валидная роль");

@@ -1,6 +1,7 @@
 ﻿using NtTaskWebServer.Framework.Attributes;
 using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
+using NtTaskWebServer.Model.Task;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace NtTaskWebServer.Controller
         }
         public async Task PostExitFromAccountAsync(HttpListenerContext context)
         {
-            WebHelper.DeleteSession(context);
+            await WebHelper.DeleteSessionAsync(context);
             await WebHelper.SendOkAsync(context, "ok");
         }
 
@@ -117,8 +118,8 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.Send400Async(context, $"{userName} и {friend} не друзья");
                 return;
             }
-            WebHelper.DeleteSession(context);
-            var cookie = SessionHelper.MakeSessionCookie(friend, Role.Reader);
+            await WebHelper.DeleteSessionAsync(context);
+            var cookie = await SessionHelper.MakeSessionCookieAsync(friend, Role.Reader);
             await WebHelper.SendJsonObjectAsync(context, cookie);
         }
     }

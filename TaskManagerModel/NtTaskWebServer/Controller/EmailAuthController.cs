@@ -26,7 +26,7 @@ namespace NtTaskWebServer.Controller
                     && WebHelper.UserCode.TryGetValue(codeData.UserName, out var code)
                     && int.Parse(codeData.Code)==code)
             {
-                WebHelper.SendSession(context, codeData.UserName, Role.Owner);
+                await WebHelper.SendSessionAsync(context, codeData.UserName, Role.Owner);
                 WebHelper.UserCode.Remove(codeData.UserName);
                 await WebHelper.SendOkAsync(context, "ok");
             }

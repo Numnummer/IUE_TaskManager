@@ -116,5 +116,5 @@ function IncreaseTaskStatus(button) {
 }
 
 function dragStart(event) {
-    console.log("start");
+    event.dataTransfer.setData("id", event.target.id);
 }

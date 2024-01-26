@@ -53,23 +53,20 @@
     </div>
 
     <div class="board">
-        <div class="column" id="NotStarted" ondragover="allowDrop(this.event)"
-             ondrop="drop(this.event)">
+        <div class="column" id="NotStarted" ondragover="allowDrop(event)" ondrop="drop(event)">
             <div class="columnHeader">
                 Не начаты
                 <button class="AddButton" onclick="openForm()">+</button>
             </div>
         </div>
 
-        <div class="column" id="InProcess" ondragover="allowDrop(this.event)"
-             ondrop="drop(this.event)">
+        <div class="column" id="InProcess" ondragover="allowDrop(event)" ondrop="drop(event)">
             <div class="columnHeader">
                 В процессе
             </div>
         </div>
 
-        <div class="column" id="Done" ondragover="allowDrop(this.event)"
-             ondrop="drop(this.event)">
+        <div class="column" id="Done" ondragover="allowDrop(event)" ondrop="drop(event)">
             <div class="columnHeader">
                 Завершены
             </div>

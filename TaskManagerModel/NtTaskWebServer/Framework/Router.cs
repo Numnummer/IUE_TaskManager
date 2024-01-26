@@ -18,7 +18,7 @@ namespace NtTaskWebServer.Framework
             var rawUrlName = context.Request.RawUrl.Trim('/');
             if (rawUrlName==string.Empty)
             {
-                rawUrlName=GetRawUrl(context);
+                rawUrlName=await GetRawUrlAsync(context);
             }
             string actionUrl;
             string controllerUrl;
@@ -51,11 +51,11 @@ namespace NtTaskWebServer.Framework
             await CallController(controllerType, methodName, context);
         }
 
-        private static string GetRawUrl(HttpListenerContext context)
+        private static async Task<string> GetRawUrlAsync(HttpListenerContext context)
         {
             var cookies = context.Request.Cookies;
             var session = cookies["session"]?.Value;
-            if (session==null || !SessionHelper.IsSessionExist(session, cookies))
+            if (session==null || !await SessionHelper.IsSessionExistAsync(session, cookies))
             {
                 return "StartPage";
             }
