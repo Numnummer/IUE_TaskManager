@@ -104,5 +104,43 @@ function allowDrop(event) {
 function drop(event) {
     event.preventDefault();
     var data = event.dataTransfer.getData("id");
-    event.target.appendChild(document.getElementById(data));
+    var target = event.target;
+    while (target !== null && target !== undefined) {
+        if (target.id === "Done" || target.id === "InProcess") {
+            switch (target.id) {
+                case "InProcess":
+                    SetTaskStatus(event.dataTransfer.getData("id"), "InProcess");
+                    break;
+                case "Done":
+                    SetTaskStatus(event.dataTransfer.getData("id"), "Done");
+                    break;
+            }
+            target.appendChild(document.getElementById(data));
+            return;
+        }
+        target = target.parentNode;
+    }
+}
+
+function SetTaskStatus(id, status) {
+    var dto = {
+        Id: id,
+        Status: status
+    };
+    $.ajax({
+        type: 'POST',
+        url: 'Dashboard/SetTaskStatus',
+        data: JSON.stringify(dto),
+        success: function (response) {
+            if (response == "ok") {
+                UpdateAllTasks();
+            }
+            else {
+                openForm(response);
+            }
+        },
+        error: function (xhr, status, error) {
+            openForm(xhr.responseText);
+        }
+    });
 }

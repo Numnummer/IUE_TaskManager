@@ -8,7 +8,7 @@ namespace NtTaskWebServer.Model.Task
 {
     public class TaskStatusDto
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Status { get; set; }
     }
 }

@@ -103,6 +103,19 @@ namespace NtTaskWebServer.Controller
         }
 
         [NeedAuth(Role.Owner)]
+        public async Task PostSetTaskStatusAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var dto = await JsonSerializer.DeserializeAsync<TaskStatusDto>(requestStream);
+            if (dto!=null && await TaskHelper.SetTaskStatusAsync(context, dto))
+            {
+                await WebHelper.SendOkAsync(context, "ok");
+                return;
+            }
+            await WebHelper.Send400Async(context, "not increased");
+        }
+
+        [NeedAuth(Role.Owner)]
         public async Task PostFriendDashboardAsync(HttpListenerContext context)
         {
             using var requestStream = context.Request.InputStream;

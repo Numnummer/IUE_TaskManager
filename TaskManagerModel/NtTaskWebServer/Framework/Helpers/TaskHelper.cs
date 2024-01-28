@@ -71,6 +71,23 @@ namespace NtTaskWebServer.Framework.Helpers
             return views.ToArray();
         }
 
+        public static async Task<bool> SetTaskStatusAsync(HttpListenerContext context, TaskStatusDto dto)
+        {
+            var id = Guid.Parse(dto.Id);
+            var userName = SessionHelper.GetUserName(context);
+            if (Enum.TryParse(typeof(TaskManagerModel.TaskStatus), dto.Status, out var status)
+                && status is TaskManagerModel.TaskStatus
+                && userName!=null)
+            {
+                _taskController.SetTaskStatusById(id, (TaskManagerModel.TaskStatus)status);
+                return await DatabaseHelper.SetTaskStatusAsync(userName, id, (TaskManagerModel.TaskStatus)status);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static async Task<bool> DecreaseTaskStatusAsync(HttpListenerContext context, Guid id)
         {
             var task = _taskController.GetTaskById(id);
