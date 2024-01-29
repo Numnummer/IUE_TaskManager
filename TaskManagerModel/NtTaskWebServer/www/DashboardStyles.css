@@ -127,3 +127,9 @@ button {
     border-radius: 3px;
     cursor: pointer;
 }
+
+.priorityClass {
+    font-size: 2vw;
+    font-weight: bold;
+    color: blue;
+}

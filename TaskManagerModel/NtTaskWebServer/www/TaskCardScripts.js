@@ -79,42 +79,10 @@ function RemoveTaskCard(button) {
     });
 }
 
-function DecreaseTaskStatus(button) {
-    var id = button.parentNode.parentNode.id;
-    $.ajax({
-        type: 'POST',
-        url: 'Dashboard/DecreaseTaskStatus',
-        data: JSON.stringify(id),
-        success: function (response) {
-            if (response == "ok") {
-                UpdateAllTasks();
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
-        }
-    });
-}
-
-function IncreaseTaskStatus(button) {
-    var id = button.parentNode.parentNode.id;
-    $.ajax({
-        type: 'POST',
-        url: 'Dashboard/IncreaseTaskStatus',
-        data: JSON.stringify(id),
-        success: function (response) {
-            if (response == "ok") {
-                UpdateAllTasks();
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
-        }
-    });
-}
-
 function dragStart(event) {
     event.dataTransfer.setData("id", event.target.id);
+}
+
+function OpenTaskWindow() {
+
 }

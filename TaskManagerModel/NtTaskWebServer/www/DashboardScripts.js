@@ -40,14 +40,12 @@ function UpdateAllTasks() {
 
         var json = JSON.stringify(response);
         var tasks = JSON.parse(json);
-        console.log("before");
         tasks.sort(function (task1, task2) {
             return task1.Priority - task2.Priority;
         });
-        console.log("after");
         //TODO: Оптимизировать удаление
         ClearTasks();
-        tasks.forEach(task => ProcessTask(task, card, "add"));
+        tasks.forEach(task => ProcessTask(task, card));
 
     }).fail(function (error) {
         console.error('Ошибка:', error);
@@ -59,7 +57,8 @@ function ProcessTask(task, card) {
     let currentCard = card.replace("name", "name" + task.Id)
         .replace("startDate", "startDate" + task.Id)
         .replace("deadline", "deadline" + task.Id)
-        .replace("cardId", task.Id);
+        .replace("cardId", task.Id)
+        .replace("cardPriority", "cardPriority" + task.Id);
 
     switch (task.Status) {
         case 0:
@@ -83,6 +82,7 @@ function ProcessTask(task, card) {
 function ShowTaskCard(currentCard, column, task) {
     document.getElementById(column).innerHTML += currentCard;
     document.getElementById("name" + task.Id).innerHTML = task.Name;
+    document.getElementById("cardPriority" + task.Id).innerHTML = task.Priority;
     const originalDate = new Date(task.Deadline);
     const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
     const formatter = new Intl.DateTimeFormat('ru-RU', options);
