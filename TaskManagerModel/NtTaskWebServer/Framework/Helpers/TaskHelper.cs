@@ -131,5 +131,17 @@ namespace NtTaskWebServer.Framework.Helpers
             }
             return true;
         }
+
+        public static TaskManagerModel.Task? GetTaskById(string id)
+        {
+            if (Guid.TryParse(id, out var taskId))
+            {
+                return _taskController.GetTaskById(taskId);
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

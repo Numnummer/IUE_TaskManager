@@ -26,3 +26,8 @@ function enter() {
 function isCodeValid(code) {
     return /^\d+$/.test(code) && code.length == codeLength;
 }
+
+window.addEventListener('load', focusOnInput);
+function focusOnInput() {
+    document.getElementById("Code").focus();
+}

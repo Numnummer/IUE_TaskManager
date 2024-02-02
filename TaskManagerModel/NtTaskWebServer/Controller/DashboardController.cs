@@ -135,6 +135,21 @@ namespace NtTaskWebServer.Controller
             var cookie = await SessionHelper.MakeSessionCookieAsync(friend, Role.Reader);
             await WebHelper.SendJsonObjectAsync(context, cookie);
         }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetWatchTaskAsync(HttpListenerContext context)
+        {
+            var view = new View("View/TaskWindow.htm", "text/html");
+            await WebHelper.SendViewAsync(context, view);
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task PostTaskDataAsync(HttpListenerContext context)
+        {
+            using var stream = context.Request.InputStream;
+            var id = JsonSerializer.DeserializeAsync<string>(stream);
+            await WebHelper.SendJsonObjectAsync(context, id);
+        }
     }
 }
 

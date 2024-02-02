@@ -83,6 +83,31 @@ function dragStart(event) {
     event.dataTransfer.setData("id", event.target.id);
 }
 
-function OpenTaskWindow() {
+function OpenTaskWindow(button) {
+    var id = button.parentNode.parentNode.id;
+    let page;
+    fetch("Dashboard/WatchTask")
+        .then(function (htmlPage) {
+            page = htmlPage.text();
+            return fetch("Dashboard/TaskData", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(id)
+            });
+        })
+        .then(function (taskData) {
+            console.log(page);
+            console.log(taskData.responseText);
+            document.getElementById("CurrentTaskWindow").innerHTML = page;
+            ProcessTaskData(taskData);
+        })
+        .catch(function (error) {
+            openForm(error.message);
+        });
+}
+
+function ProcessTaskData(taskData) {
 
 }
