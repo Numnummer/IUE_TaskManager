@@ -147,8 +147,8 @@ namespace NtTaskWebServer.Controller
         public async Task PostTaskDataAsync(HttpListenerContext context)
         {
             using var stream = context.Request.InputStream;
-            var id = JsonSerializer.DeserializeAsync<string>(stream);
-            await WebHelper.SendJsonObjectAsync(context, id);
+            var id = await JsonSerializer.DeserializeAsync<string>(stream);
+            await WebHelper.SendTaskByIdAsync(context, id);
         }
     }
 }

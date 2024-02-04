@@ -12,7 +12,34 @@
 </head>
 
 <body>
-    <div id="CurrentTaskWindow"></div>
+    <div id="CurrentTaskWindow">
+        <div id="taskWindowEditor">
+            <div id="editor">
+                <div class="left-column">
+                    <label id="currentTaskNameLabel">Имя</label>
+                    <input id="currentTaskName" type="text" />
+                    <label id="currentTaskPriorityLabel">Приоритет</label>
+                    <input id="currentTaskPriority" type="number" />
+                    <label id="currentTaskStatusLabel">Статус</label>
+                    <label id="currentTaskStatus">fsf</label>
+                </div>
+                <div class="right-column">
+                    <label id="currentTaskStartLabel">Дата старта</label>
+                    <input id="currentTaskStart" type="datetime-local" />
+                    <label id="currentTaskDeadlineLabel">Дата дедлайна</label>
+                    <input id="currentTaskDeadline" type="datetime-local" />
+                    <button id="saveTask">Сохранить</button>
+                </div>
+            </div>
+
+            <div id="window">
+                <div id="field">
+                    <button>uvuyv</button>
+                    <label>yui</label>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="taskForm">
         <button onclick="hideForm()">X</button>

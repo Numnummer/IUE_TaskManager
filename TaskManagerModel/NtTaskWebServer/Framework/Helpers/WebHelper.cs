@@ -102,6 +102,14 @@ namespace NtTaskWebServer.Framework.Helpers
             await SendOkAsync(context, response);
         }
 
+        public static async Task SendTaskByIdAsync(HttpListenerContext context, string id)
+        {
+            var task = TaskHelper.GetTaskById(id);
+            var response = await Task.Run(() => JsonSerializer.Serialize(task));
+            context.Response.ContentType="application/json";
+            await SendOkAsync(context, response);
+        }
+
         public static async Task SendJsonObjectAsync(HttpListenerContext context, object obj)
         {
             var response = await Task.Run(() => JsonSerializer.Serialize(obj));
