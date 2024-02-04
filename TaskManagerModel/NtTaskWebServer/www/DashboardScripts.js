@@ -8,16 +8,6 @@ function ToProfile() {
 }
 
 function ExitFromAccount() {
-    //$.post('Dashboard/ExitFromAccount', function (response) {
-    //    if (response == "ok") {
-    //        window.location = "StartPage";
-    //    }
-    //    else {
-    //        openErrWindow(response);
-    //    }
-    //}).fail(function (error) {
-    //    openErrWindow(error);
-    //});
     $.ajax({
         type: 'POST',
         url: 'Dashboard/ExitFromAccount',
@@ -50,14 +40,12 @@ function UpdateAllTasks() {
 
         var json = JSON.stringify(response);
         var tasks = JSON.parse(json);
-        console.log("before");
         tasks.sort(function (task1, task2) {
             return task1.Priority - task2.Priority;
         });
-        console.log("after");
         //TODO: Оптимизировать удаление
         ClearTasks();
-        tasks.forEach(task => ProcessTask(task, card, "add"));
+        tasks.forEach(task => ProcessTask(task, card));
 
     }).fail(function (error) {
         console.error('Ошибка:', error);
@@ -69,7 +57,8 @@ function ProcessTask(task, card) {
     let currentCard = card.replace("name", "name" + task.Id)
         .replace("startDate", "startDate" + task.Id)
         .replace("deadline", "deadline" + task.Id)
-        .replace("cardId", task.Id);
+        .replace("cardId", task.Id)
+        .replace("cardPriority", "cardPriority" + task.Id);
 
     switch (task.Status) {
         case 0:
@@ -93,6 +82,7 @@ function ProcessTask(task, card) {
 function ShowTaskCard(currentCard, column, task) {
     document.getElementById(column).innerHTML += currentCard;
     document.getElementById("name" + task.Id).innerHTML = task.Name;
+    document.getElementById("cardPriority" + task.Id).innerHTML = task.Priority;
     const originalDate = new Date(task.Deadline);
     const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
     const formatter = new Intl.DateTimeFormat('ru-RU', options);
@@ -105,4 +95,52 @@ function ClearTasks() {
     document.getElementById("InProcess").innerHTML = "<div class=\"columnHeader\">В процессе</div > ";
     document.getElementById("Done").innerHTML = "<div class=\"columnHeader\">Завершены</div > ";
     document.getElementById("Expired").innerHTML = "<div class=\"columnHeader\">Просрочены</div > ";
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    var data = event.dataTransfer.getData("id");
+    var target = event.target;
+    while (target !== null && target !== undefined) {
+        if (target.id === "Done" || target.id === "InProcess") {
+            switch (target.id) {
+                case "InProcess":
+                    SetTaskStatus(event.dataTransfer.getData("id"), "InProcess");
+                    break;
+                case "Done":
+                    SetTaskStatus(event.dataTransfer.getData("id"), "Done");
+                    break;
+            }
+            target.appendChild(document.getElementById(data));
+            return;
+        }
+        target = target.parentNode;
+    }
+}
+
+function SetTaskStatus(id, status) {
+    var dto = {
+        Id: id,
+        Status: status
+    };
+    $.ajax({
+        type: 'POST',
+        url: 'Dashboard/SetTaskStatus',
+        data: JSON.stringify(dto),
+        success: function (response) {
+            if (response == "ok") {
+                UpdateAllTasks();
+            }
+            else {
+                openForm(response);
+            }
+        },
+        error: function (xhr, status, error) {
+            openForm(xhr.responseText);
+        }
+    });
 }

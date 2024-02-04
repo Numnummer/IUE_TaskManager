@@ -14,18 +14,27 @@ namespace NtTaskWebServer.Framework.Middleware
 
         public override async Task Invoke(HttpListenerContext context)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 var cookies = context.Request.Cookies;
                 var session = cookies["session"]?.Value;
-                if (session==null || !SessionHelper.IsSessionExist(session, cookies))
+                try
                 {
-                    WebSettings.IsAuthentificated=false;
+                    if (session==null || !await SessionHelper.IsSessionExistAsync(session, cookies))
+                    {
+                        WebSettings.IsAuthentificated=false;
+                    }
+                    else
+                    {
+                        WebSettings.IsAuthentificated=true;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    WebSettings.IsAuthentificated=true;
+
+                    throw;
                 }
+
             });
             if (_successor!=null)
             {

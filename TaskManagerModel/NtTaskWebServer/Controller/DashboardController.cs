@@ -1,6 +1,7 @@
 ﻿using NtTaskWebServer.Framework.Attributes;
 using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
+using NtTaskWebServer.Model.Task;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace NtTaskWebServer.Controller
         }
         public async Task PostExitFromAccountAsync(HttpListenerContext context)
         {
-            WebHelper.DeleteSession(context);
+            await WebHelper.DeleteSessionAsync(context);
             await WebHelper.SendOkAsync(context, "ok");
         }
 
@@ -102,6 +103,19 @@ namespace NtTaskWebServer.Controller
         }
 
         [NeedAuth(Role.Owner)]
+        public async Task PostSetTaskStatusAsync(HttpListenerContext context)
+        {
+            using var requestStream = context.Request.InputStream;
+            var dto = await JsonSerializer.DeserializeAsync<TaskStatusDto>(requestStream);
+            if (dto!=null && await TaskHelper.SetTaskStatusAsync(context, dto))
+            {
+                await WebHelper.SendOkAsync(context, "ok");
+                return;
+            }
+            await WebHelper.Send400Async(context, "not increased");
+        }
+
+        [NeedAuth(Role.Owner)]
         public async Task PostFriendDashboardAsync(HttpListenerContext context)
         {
             using var requestStream = context.Request.InputStream;
@@ -117,9 +131,24 @@ namespace NtTaskWebServer.Controller
                 await WebHelper.Send400Async(context, $"{userName} и {friend} не друзья");
                 return;
             }
-            WebHelper.DeleteSession(context);
-            var cookie = SessionHelper.MakeSessionCookie(friend, Role.Reader);
+            await WebHelper.DeleteSessionAsync(context);
+            var cookie = await SessionHelper.MakeSessionCookieAsync(friend, Role.Reader);
             await WebHelper.SendJsonObjectAsync(context, cookie);
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task GetWatchTaskAsync(HttpListenerContext context)
+        {
+            var view = new View("View/TaskWindow.htm", "text/html");
+            await WebHelper.SendViewAsync(context, view);
+        }
+
+        [NeedAuth(Role.Reader)]
+        public async Task PostTaskDataAsync(HttpListenerContext context)
+        {
+            using var stream = context.Request.InputStream;
+            var id = await JsonSerializer.DeserializeAsync<string>(stream);
+            await WebHelper.SendTaskByIdAsync(context, id);
         }
     }
 }

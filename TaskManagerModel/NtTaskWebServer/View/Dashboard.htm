@@ -7,10 +7,40 @@
     <link rel="stylesheet" type="text/css" href="www/StartPageStyles.css">
     <link rel="stylesheet" type="text/css" href="www/DashboardStyles.css">
     <link rel="stylesheet" type="text/css" href="www/ErrorHandlerStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/TaskWindowStyles.css">
     <link rel="shortcut icon" href="www/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
+    <div id="CurrentTaskWindow">
+        <div id="taskWindowEditor">
+            <div id="editor">
+                <div class="left-column">
+                    <label id="currentTaskNameLabel">Имя</label>
+                    <input id="currentTaskName" type="text" />
+                    <label id="currentTaskPriorityLabel">Приоритет</label>
+                    <input id="currentTaskPriority" type="number" />
+                    <label id="currentTaskStatusLabel">Статус</label>
+                    <label id="currentTaskStatus">fsf</label>
+                </div>
+                <div class="right-column">
+                    <label id="currentTaskStartLabel">Дата старта</label>
+                    <input id="currentTaskStart" type="datetime-local" />
+                    <label id="currentTaskDeadlineLabel">Дата дедлайна</label>
+                    <input id="currentTaskDeadline" type="datetime-local" />
+                    <button id="saveTask">Сохранить</button>
+                </div>
+            </div>
+
+            <div id="window">
+                <div id="field">
+                    <button>uvuyv</button>
+                    <label>yui</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="taskForm">
         <button onclick="hideForm()">X</button>
         <form class="task">
@@ -53,21 +83,21 @@
     </div>
 
     <div class="board">
-        <div class="column" id="NotStarted">
+        <div class="column" id="NotStarted" ondragover="allowDrop(event)" ondrop="drop(event)">
             <div class="columnHeader">
                 Не начаты
                 <button class="AddButton" onclick="openForm()">+</button>
             </div>
         </div>
 
-        <div class="column" id="InProcess">
-            <div class="columnHeader">
+        <div class="column" id="InProcess" ondragover="allowDrop(event)" ondrop="drop(event)">
+            <div class="columnHeader" id="InProcessHeader">
                 В процессе
             </div>
         </div>
 
-        <div class="column" id="Done">
-            <div class="columnHeader">
+        <div class="column" id="Done" ondragover="allowDrop(event)" ondrop="drop(event)">
+            <div class="columnHeader" id="DoneHeader">
                 Завершены
             </div>
         </div>
@@ -86,3 +116,4 @@
 <script src="www/DashboardScripts.js"></script>
 <script src="www/TaskCardScripts.js"></script>
 <script src="www/ErrorHandlerScripts.js"></script>
+<script src="www/TaskWindowScripts.js"></script>

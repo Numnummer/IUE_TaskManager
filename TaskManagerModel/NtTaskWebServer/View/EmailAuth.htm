@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="Big Number">
+    <meta charset="utf-8">
+    <title>Код</title>
+    <link rel="stylesheet" type="text/css" href="www/LogInStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/StartPageStyles.css">
+    <link rel="stylesheet" type="text/css" href="www/ErrorHandlerStyles.css">
+    <link rel="shortcut icon" href="www/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <div id="errorWindow">
+        <button onclick="hideErrWindow()">X</button>
+        <label id="errorText" class="labelText"></label>
+    </div>
+
+    <form class="loginForm">
+        <div class="formItem">
+            <label class="labelText">Вам на почту пришел код</label>
+        </div>
+        <div class="formItem">
+            <label class="labelText">Код</label>
+            <input class="inputText" type="text" id="Code" />
+        </div>
+
+        <button type="button" class="classicButton" onclick="enter()">Далее</button>
+        <br />
+        <label id="errorLabel"></label>
+    </form>
+
+</body>
+
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="www/EmailAuthScripts.js"></script>
+<script src="www/ErrorHandlerScripts.js"></script>

@@ -79,38 +79,32 @@ function RemoveTaskCard(button) {
     });
 }
 
-function DecreaseTaskStatus(button) {
+function dragStart(event) {
+    event.dataTransfer.setData("id", event.target.id);
+}
+
+function OpenTaskWindow(button) {
     var id = button.parentNode.parentNode.id;
     $.ajax({
         type: 'POST',
-        url: 'Dashboard/DecreaseTaskStatus',
+        url: 'Dashboard/TaskData',
         data: JSON.stringify(id),
         success: function (response) {
-            if (response == "ok") {
-                UpdateAllTasks();
-            }
+            document.getElementById("taskWindowEditor").style.display = "block";
+            //var taskData = JSON.parse(response);
+            ProcessTaskData(response);
         },
         error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
+            openForm(xhr.responseText);
         }
     });
 }
 
-function IncreaseTaskStatus(button) {
-    var id = button.parentNode.parentNode.id;
-    $.ajax({
-        type: 'POST',
-        url: 'Dashboard/IncreaseTaskStatus',
-        data: JSON.stringify(id),
-        success: function (response) {
-            if (response == "ok") {
-                UpdateAllTasks();
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
-        }
-    });
+function ProcessTaskData(taskData) {
+    console.log(taskData);
+    document.getElementById("currentTaskName").value = taskData.Name;
+    document.getElementById("currentTaskPriority").value = taskData.Priority;
+    document.getElementById("currentTaskStatus").innerHTML = taskData.Status;
+    document.getElementById("currentTaskStart").value = taskData.StartTime;
+    document.getElementById("currentTaskDeadline").value = taskData.Deadline;
 }

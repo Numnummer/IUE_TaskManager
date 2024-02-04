@@ -23,10 +23,20 @@ namespace NtTaskWebServer.Controller
             using var requestStream = context.Request.InputStream;
             var loginData = await JsonSerializer.DeserializeAsync<LoginData>(requestStream);
             var isDataExists = await DatabaseHelper.IsLoginDataExistAsync(loginData);
-            if (isDataExists)
+            var code = WebHelper.GetCode(loginData.UserName);
+            if (isDataExists && code!=null)
             {
-                WebHelper.SendSession(context, loginData.UserName, Role.Owner);
-                await WebHelper.SendOkAsync(context, "User accepted");
+                try
+                {
+                    var email = (await DatabaseHelper.GetUserDataAsync(loginData.UserName)).Email;
+                    await MailHelper.SendEmail(email, "NtTask Enter", $"Вы вошли под именем {loginData.UserName}\nВаш код: {code}");
+                    await WebHelper.SendOkAsync(context, "User accepted");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    await WebHelper.Send400Async(context, "Ошибка отправки почты");
+                }
             }
             else
             {

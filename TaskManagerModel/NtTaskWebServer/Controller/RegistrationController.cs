@@ -24,11 +24,11 @@ namespace NtTaskWebServer.Controller
             using var requestStream = context.Request.InputStream;
             var loginData = await JsonSerializer.DeserializeAsync<LoginData>(requestStream);
             var isDataWritten = await DatabaseHelper.WriteLoginDataAsync(loginData);
-            if (isDataWritten)
+            var code = WebHelper.GetCode(loginData.UserName);
+            if (isDataWritten && code!=null)
             {
-                WebHelper.SendSession(context, loginData.UserName, Role.Owner);
                 await WebHelper.SendOkAsync(context, "User accepted");
-                await MailHelper.SendEmail(loginData.Email, "NtTask Registration", $"Вы зарегистрировались под именем {loginData.UserName}");
+                await MailHelper.SendEmail(loginData.Email, "NtTask Registration", $"Вы зарегистрировались под именем {loginData.UserName}\nВаш код: {code}");
             }
             else
             {

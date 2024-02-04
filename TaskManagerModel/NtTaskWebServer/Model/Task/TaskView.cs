@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NtTaskWebServer.Model
+namespace NtTaskWebServer.Model.Task
 {
     public class TaskView : View
     {
@@ -15,7 +15,7 @@ namespace NtTaskWebServer.Model
         public TaskView(string fileName, string contentType,
             TaskManagerModel.Task task) : base(fileName, contentType)
         {
-            if (task==null)
+            if (task == null)
             {
                 throw new ArgumentNullException($"{nameof(task)} is null");
             }
@@ -27,13 +27,13 @@ namespace NtTaskWebServer.Model
                 throw new Exception("Не найден id даты старта задачи");
             var deadline = document.GetElementbyId("deadline") ??
                 throw new Exception("Не найден id дедлайна задачи");
-            name.InnerHtml=task.Name;
-            startDate.InnerHtml=task.StartTime.ToString();
-            deadline.InnerHtml=task.Deadline.ToString();
+            name.InnerHtml = task.Name;
+            startDate.InnerHtml = task.StartTime.ToString();
+            deadline.InnerHtml = task.Deadline.ToString();
 
-            TaskHtml=document.Text;
-            PriorityDto=task.Priority.ToString();
-            StatusDto=task.Status.ToString();
+            TaskHtml = document.Text;
+            PriorityDto = task.Priority.ToString();
+            StatusDto = task.Status.ToString();
         }
 
     }

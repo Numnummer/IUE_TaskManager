@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using NtTaskWebServer.Model;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +12,28 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class SessionHelper
     {
-        private static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
+        private static readonly ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect("localhost");
+        private static readonly IDatabase _database = _redis.GetDatabase();
 
         public const byte CookieLifetimeMinutes = 30;
-        public static bool IsSessionExist(string session, CookieCollection cookies)
+
+        public static async Task<bool> IsSessionExistAsync(string session, CookieCollection cookies)
         {
             if (string.IsNullOrWhiteSpace(session)) return false;
             var splitSession = session.Split(' ');
             var sessionId = Guid.Parse(splitSession[0]);
-            if (memoryCache.TryGetValue(sessionId, out var cookie))
+            if (await _database.KeyExistsAsync(sessionId.ToString()))
             {
-                if (sessionId == Guid.Parse((cookie as Cookie).Value.Split(' ')[0]))
+                var cookieValue = await _database.StringGetAsync(sessionId.ToString());
+                if (sessionId == Guid.Parse(cookieValue.ToString().Split(' ')[0]))
                 {
                     return true;
                 }
             }
             return false;
         }
-        public static Cookie MakeSessionCookie(string userName, Role role)
+
+        public static async Task<Cookie> MakeSessionCookieAsync(string userName, Model.Role role)
         {
             var sessionId = Guid.NewGuid();
             var value = new UserData(userName, sessionId, role);
@@ -36,18 +41,18 @@ namespace NtTaskWebServer.Framework.Helpers
             {
                 Name = "session",
                 Value = value.ToString(),
-                Expires = DateTime.UtcNow.AddMinutes(CookieLifetimeMinutes)
+                Expires = DateTime.Now.AddMinutes(CookieLifetimeMinutes)
             };
-            memoryCache.Set(sessionId, cookie);
+            await _database.StringSetAsync(sessionId.ToString(), cookie.Value, expiry: TimeSpan.FromMinutes(CookieLifetimeMinutes));
             return cookie;
         }
 
-        public static bool RemoveCookie(Cookie cookie)
+        public static async Task<bool> RemoveCookieAsync(Cookie cookie)
         {
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            memoryCache.Remove(userId);
-            return memoryCache.TryGetValue(userId, out _);
+            return await _database.KeyDeleteAsync(userId.ToString());
         }
+
         public static string? GetUserName(HttpListenerContext context)
         {
             try
@@ -61,11 +66,28 @@ namespace NtTaskWebServer.Framework.Helpers
             }
         }
 
-        public static Cookie? GetCookie(HttpListenerContext context)
+        public static async Task<Cookie?> GetCookieAsync(HttpListenerContext context)
         {
             var cookie = context.Request.Cookies["session"];
             var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
-            return memoryCache.Get(userId) as Cookie;
+            var cookieValue = await _database.StringGetAsync(userId.ToString());
+            if (!cookieValue.IsNull)
+            {
+                return new Cookie()
+                {
+                    Name = "session",
+                    Value = cookieValue.ToString(),
+                    Expires = DateTime.Now.AddMinutes(CookieLifetimeMinutes)
+                };
+            }
+            return null;
+        }
+
+        public static async Task<bool> UpdateSessionAsync(Cookie cookie)
+        {
+            var userId = Guid.Parse(cookie.Value.Split(' ')[0]);
+            var newExpiry = TimeSpan.FromMinutes(CookieLifetimeMinutes);
+            return await _database.KeyExpireAsync(userId.ToString(), newExpiry);
         }
     }
 }

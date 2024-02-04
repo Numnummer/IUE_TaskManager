@@ -25,23 +25,35 @@ function openForm() {
 }
 
 document.getElementById("UserNameInput").addEventListener('input', function (event) {
+    var cacheKey = 'userCache_' + event.target.value;
+    var cachedResult = localStorage.getItem(cacheKey);
 
-    $.ajax({
-        type: 'POST',
-        url: 'UserProfile/Users',
-        data: JSON.stringify(event.target.value),
-        success: function (response) {
-            var json = JSON.stringify(response);
-            var users = JSON.parse(json);
-            document.getElementById("users").innerHTML = "";
-            users.forEach(user => ProcessUser(user));
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.log('Failed: ' + error);
-        }
-    });
+    if (cachedResult != null) {
+        var users = JSON.parse(cachedResult);
+        document.getElementById("users").innerHTML = "";
+        users.forEach(user => ProcessUser(user));
+    } else {
+        $.ajax({
+            type: 'POST',
+            url: 'UserProfile/Users',
+            data: JSON.stringify(event.target.value),
+            success: function (response) {
+                var json = JSON.stringify(response);
+                var users = JSON.parse(json);
+
+                localStorage.setItem(cacheKey, json);
+
+                document.getElementById("users").innerHTML = "";
+                users.forEach(user => ProcessUser(user));
+            },
+            error: function (xhr, status, error) {
+                document.getElementById("operationResult").innerHTML = xhr.responseText;
+                console.log('Failed: ' + error);
+            }
+        });
+    }
 });
+
 
 function ProcessUser(user) {
     document.getElementById("users").innerHTML += "<li class=\"userList\">" + "<button type=\"button\" onclick=\"SendOrder(this)\">" + user + "</button>" + "</li>";
@@ -87,6 +99,7 @@ function UpdateAllFriends() {
             var json = JSON.stringify(response);
             var orders = JSON.parse(json);
             document.getElementById("orders").innerHTML = "";
+            console.log(orders);
             orders.forEach(order => ProcessOrder(order));
         },
         error: function (xhr, status, error) {

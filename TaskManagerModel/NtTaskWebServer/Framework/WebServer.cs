@@ -23,7 +23,6 @@ namespace NtTaskWebServer.Framework
             {
                 var context = await _listener.GetContextAsync();
                 await MiddlewareRunner.RunMiddleware(context);
-                Console.WriteLine(cancellationToken.IsCancellationRequested);
             }
             _listener.Close();
         }

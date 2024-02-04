@@ -11,6 +11,17 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class WebHelper
     {
+        public static readonly Dictionary<string, int> UserCode = new();
+        public static string? GetCode(string userName)
+        {
+            Random random = new Random();
+            int code = random.Next(100000, 999999);
+            if (UserCode.TryAdd(userName, code))
+            {
+                return code.ToString();
+            }
+            return null;
+        }
         public static async Task Send400Async(HttpListenerContext context, string message)
         {
             context.Response.StatusCode = 400;
@@ -36,21 +47,25 @@ namespace NtTaskWebServer.Framework.Helpers
             await stream.WriteAsync(bytes, 0, bytes.Length);
         }
 
-        public static void SendSession(HttpListenerContext context, string userName, Role role)
+        public static async Task SendSessionAsync(HttpListenerContext context, string userName, Role role)
         {
-            var cookie = SessionHelper.MakeSessionCookie(userName, role);
-            context.Response.Cookies.Add(cookie);
+            var cookie = await SessionHelper.MakeSessionCookieAsync(userName, role);
+            cookie.Domain="127.0.0.1";
+            cookie.Path="/";
+            cookie.HttpOnly = true;
+            context.Response.SetCookie(cookie);
         }
 
-        public static void UpdateSession(HttpListenerContext context)
+        public static async Task UpdateSessionAsync(HttpListenerContext context)
         {
-            var cookie = SessionHelper.GetCookie(context);
+            var cookie = await SessionHelper.GetCookieAsync(context);
             if (cookie==null)
             {
                 return;
             }
             cookie.Expires = DateTime.UtcNow.AddMinutes(SessionHelper.CookieLifetimeMinutes);
             context.Response.SetCookie(cookie);
+            await SessionHelper.UpdateSessionAsync(cookie);
         }
 
         public static void Send401(HttpListenerContext context)
@@ -65,16 +80,16 @@ namespace NtTaskWebServer.Framework.Helpers
             context.Response.Close();
         }
 
-        public static void DeleteSession(HttpListenerContext context)
+        public static async Task DeleteSessionAsync(HttpListenerContext context)
         {
             var sessionCookie = context.Request.Cookies["session"];
             if (sessionCookie == null)
             {
                 return;
             }
-            if (SessionHelper.RemoveCookie(sessionCookie))
+            if (await SessionHelper.RemoveCookieAsync(sessionCookie))
             {
-                var cookie = SessionHelper.GetCookie(context);
+                var cookie = await SessionHelper.GetCookieAsync(context);
                 cookie.Expires = DateTime.Now.AddDays(-1);
                 context.Response.SetCookie(cookie);
             }
@@ -86,6 +101,15 @@ namespace NtTaskWebServer.Framework.Helpers
             context.Response.ContentType="application/json";
             await SendOkAsync(context, response);
         }
+
+        public static async Task SendTaskByIdAsync(HttpListenerContext context, string id)
+        {
+            var task = TaskHelper.GetTaskById(id);
+            var response = await Task.Run(() => JsonSerializer.Serialize(task));
+            context.Response.ContentType="application/json";
+            await SendOkAsync(context, response);
+        }
+
         public static async Task SendJsonObjectAsync(HttpListenerContext context, object obj)
         {
             var response = await Task.Run(() => JsonSerializer.Serialize(obj));
