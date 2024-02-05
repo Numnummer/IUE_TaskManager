@@ -91,7 +91,6 @@ function OpenTaskWindow(button) {
         data: JSON.stringify(id),
         success: function (response) {
             document.getElementById("taskWindowEditor").style.display = "block";
-            //var taskData = JSON.parse(response);
             ProcessTaskData(response);
         },
         error: function (xhr, status, error) {

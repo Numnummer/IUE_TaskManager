@@ -21,3 +21,7 @@ windowDiv.addEventListener('mousemove', function (e) {
 windowDiv.addEventListener('mouseup', function () {
     isDragging = false;
 });
+
+function closeTaskWindowEditor() {
+    document.getElementById("taskWindowEditor").style.display = "none";
+}

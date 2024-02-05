@@ -90,3 +90,19 @@
     margin: 5%;
     z-index: 1;
 }
+
+.closeButton {
+    position: absolute;
+    top: 7vh;
+    right: 2vw;
+    font-size: 1vw;
+    background-color: #f01e08;
+    border: none;
+}
+
+
+#editorFooter {
+    position: fixed;
+    top: 8%;
+    right: 5%;
+}
