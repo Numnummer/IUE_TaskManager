@@ -10,19 +10,19 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class TaskHelper
     {
-        private static readonly TaskManagerModel.TaskController _taskController = new();
+        private static readonly TaskManagerDomain.TaskController _taskController = new();
         static TaskHelper()
         {
             _taskController.TaskUpdated+=OnTaskUpdate;
         }
-        public static void OnTaskUpdate(TaskManagerModel.Task updatedTask)
+        public static void OnTaskUpdate(Models.Task updatedTask)
         {
             Task.Run(async () =>
             {
                 await DatabaseHelper.UpdateTask(updatedTask);
             });
         }
-        public static async Task<TaskManagerModel.Task[]> UpdateAllTasksAsync(HttpListenerContext context)
+        public static async Task<Models.Task[]> UpdateAllTasksAsync(HttpListenerContext context)
         {
             var tasks = await DatabaseHelper.GetTaskDataAsync(SessionHelper.GetUserName(context));
             _taskController.AddIfNotExist(tasks);
@@ -35,7 +35,7 @@ namespace NtTaskWebServer.Framework.Helpers
             return _taskController.StartTaskById(id);
         }
 
-        public static async Task<TaskManagerModel.Task> CreateTaskAsync(HttpListenerContext context, string name, DateTime deadline, uint priorityNumber)
+        public static async Task<Models.Task> CreateTaskAsync(HttpListenerContext context, string name, DateTime deadline, uint priorityNumber)
         {
             var taskObject = _taskController.CreateTask(name, deadline, priorityNumber);
             var userName = SessionHelper.GetUserName(context);
@@ -61,26 +61,16 @@ namespace NtTaskWebServer.Framework.Helpers
             return true;
         }
 
-        public static TaskView[] MakeTaskViews(TaskManagerModel.Task[] tasks)
-        {
-            var views = new List<TaskView>();
-            foreach (var task in tasks)
-            {
-                views.Add(new TaskView("TaskCard.htm", "text/html", task));
-            }
-            return views.ToArray();
-        }
-
         public static async Task<bool> SetTaskStatusAsync(HttpListenerContext context, TaskStatusDto dto)
         {
             var id = Guid.Parse(dto.Id);
             var userName = SessionHelper.GetUserName(context);
-            if (Enum.TryParse(typeof(TaskManagerModel.TaskStatus), dto.Status, out var status)
-                && status is TaskManagerModel.TaskStatus
+            if (Enum.TryParse(typeof(Models.TaskStatus), dto.Status, out var status)
+                && status is Models.TaskStatus
                 && userName!=null)
             {
-                _taskController.SetTaskStatusById(id, (TaskManagerModel.TaskStatus)status);
-                return await DatabaseHelper.SetTaskStatusAsync(userName, id, (TaskManagerModel.TaskStatus)status);
+                _taskController.SetTaskStatusById(id, (Models.TaskStatus)status);
+                return await DatabaseHelper.SetTaskStatusAsync(userName, id, (Models.TaskStatus)status);
             }
             else
             {
@@ -94,17 +84,17 @@ namespace NtTaskWebServer.Framework.Helpers
             var userName = SessionHelper.GetUserName(context);
             switch (task.Status)
             {
-                case TaskManagerModel.TaskStatus.NotStarted:
+                case Models.TaskStatus.NotStarted:
                     return false;
-                case TaskManagerModel.TaskStatus.InProcess:
-                    _taskController.SetTaskStatusById(id, TaskManagerModel.TaskStatus.NotStarted);
-                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.NotStarted);
+                case Models.TaskStatus.InProcess:
+                    _taskController.SetTaskStatusById(id, Models.TaskStatus.NotStarted);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, Models.TaskStatus.NotStarted);
                     break;
-                case TaskManagerModel.TaskStatus.Done:
-                    _taskController.SetTaskStatusById(id, TaskManagerModel.TaskStatus.InProcess);
-                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.InProcess);
+                case Models.TaskStatus.Done:
+                    _taskController.SetTaskStatusById(id, Models.TaskStatus.InProcess);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, Models.TaskStatus.InProcess);
                     break;
-                case TaskManagerModel.TaskStatus.Expired:
+                case Models.TaskStatus.Expired:
                     return false;
             }
             return true;
@@ -116,23 +106,23 @@ namespace NtTaskWebServer.Framework.Helpers
             var userName = SessionHelper.GetUserName(context);
             switch (task.Status)
             {
-                case TaskManagerModel.TaskStatus.NotStarted:
+                case Models.TaskStatus.NotStarted:
                     _taskController.StartTaskById(id);
-                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.InProcess);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, Models.TaskStatus.InProcess);
                     break;
-                case TaskManagerModel.TaskStatus.InProcess:
+                case Models.TaskStatus.InProcess:
                     _taskController.CompleteTaskById(id);
-                    await DatabaseHelper.SetTaskStatusAsync(userName, id, TaskManagerModel.TaskStatus.Done);
+                    await DatabaseHelper.SetTaskStatusAsync(userName, id, Models.TaskStatus.Done);
                     break;
-                case TaskManagerModel.TaskStatus.Done:
+                case Models.TaskStatus.Done:
                     return false;
-                case TaskManagerModel.TaskStatus.Expired:
+                case Models.TaskStatus.Expired:
                     return false;
             }
             return true;
         }
 
-        public static TaskManagerModel.Task? GetTaskById(string id)
+        public static Models.Task? GetTaskById(string id)
         {
             if (Guid.TryParse(id, out var taskId))
             {

@@ -9,9 +9,9 @@ namespace NtTaskWebServer.Model.Builder
 {
     public static class TaskDataBuilder
     {
-        public static async Task<TaskManagerModel.Task[]> BuildTaskDataByDataReaderAsync(NpgsqlDataReader reader)
+        public static async Task<Models.Task[]> BuildTaskDataByDataReaderAsync(NpgsqlDataReader reader)
         {
-            var taskData = new List<TaskManagerModel.Task>();
+            var taskData = new List<Models.Task>();
             while (await reader.ReadAsync())
             {
                 var id = reader.GetValue(0) as Guid? ?? throw new Exception("Invalid id");
@@ -23,7 +23,7 @@ namespace NtTaskWebServer.Model.Builder
                 try
                 {
                     var status = reader.GetValue(5) as string ?? throw new Exception("Invalid status");
-                    taskData.Add(new TaskManagerModel.Task()
+                    taskData.Add(new Models.Task()
                     {
                         Id = id,
                         Name = name,
@@ -43,14 +43,14 @@ namespace NtTaskWebServer.Model.Builder
 
             return taskData.ToArray();
         }
-        public static TaskManagerModel.TaskStatus GetStatus(string status)
+        public static Models.TaskStatus GetStatus(string status)
         {
             return status switch
             {
-                "NotStarted" => TaskManagerModel.TaskStatus.NotStarted,
-                "InProcess" => TaskManagerModel.TaskStatus.InProcess,
-                "Done" => TaskManagerModel.TaskStatus.Done,
-                "Expired" => TaskManagerModel.TaskStatus.Expired
+                "NotStarted" => Models.TaskStatus.NotStarted,
+                "InProcess" => Models.TaskStatus.InProcess,
+                "Done" => Models.TaskStatus.Done,
+                "Expired" => Models.TaskStatus.Expired
             };
         }
     }

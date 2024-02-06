@@ -1,4 +1,4 @@
-﻿namespace TaskManagerModel
+﻿namespace Models
 {
     public abstract class Entity
     {

@@ -1,16 +1,19 @@
-﻿using System;
+﻿using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Task = Models.Task;
+using TaskStatus = Models.TaskStatus;
 
-namespace TaskManagerModel
+namespace TaskManagerDomain
 {
     public class TaskController : ITaskController
     {
         private readonly Dictionary<Guid, Task> _tasks = new Dictionary<Guid, Task>();
 
-        public event Action<Task> TaskUpdated = (Task task) => { };
+        public event Action<Task> TaskUpdated = (task) => { };
 
         public Task CreateTask(string name, DateTime deadline, uint priority)
         {

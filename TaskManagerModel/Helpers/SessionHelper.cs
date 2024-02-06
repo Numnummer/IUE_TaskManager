@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿
 using NtTaskWebServer.Model;
 using StackExchange.Redis;
 using System;

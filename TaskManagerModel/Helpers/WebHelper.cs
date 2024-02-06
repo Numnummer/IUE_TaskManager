@@ -95,7 +95,7 @@ namespace NtTaskWebServer.Framework.Helpers
             }
         }
 
-        public static async Task SendTasksAsync(HttpListenerContext context, TaskManagerModel.Task[] tasks)
+        public static async Task SendTasksAsync(HttpListenerContext context, Models.Task[] tasks)
         {
             var response = await Task.Run(() => JsonSerializer.Serialize(tasks));
             context.Response.ContentType="application/json";

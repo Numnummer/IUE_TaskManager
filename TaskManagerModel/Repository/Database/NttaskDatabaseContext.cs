@@ -15,7 +15,19 @@ namespace NtTaskWebServer.Framework.Database
 {
     public class NttaskDatabaseContext : DatabaseContext
     {
-        public NttaskDatabaseContext() : base(ConfigurationManager.ConnectionStrings["nttask"].ConnectionString) { }
+        private string? _hashSalt;
+        public NttaskDatabaseContext(string connectionString, string hashSalt) : base(connectionString)
+        {
+            _hashSalt=hashSalt;
+            if (hashSalt == null)
+            {
+                throw new ArgumentNullException(nameof(hashSalt));
+            }
+            if (connectionString == null)
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+        }
 
         public async Task<bool> WriteLoginDataAsync(LoginData loginData)
         {
@@ -24,7 +36,7 @@ namespace NtTaskWebServer.Framework.Database
             {
                 return false;
             }
-            var hashedPassword = CryptoHelper.HashString(loginData.Password);
+            var hashedPassword = CryptoHelper.HashString(loginData.Password, _hashSalt);
             var commandText = "insert into userdata(name,email,login,password) " +
                 $"values(@UserName,@Email,@Login,@Password)";
             var parameters = MakeParameters(("@UserName", loginData.UserName), ("@Email", loginData.Email), ("@Login", loginData.Login), ("@Password", hashedPassword));
@@ -34,7 +46,7 @@ namespace NtTaskWebServer.Framework.Database
 
         public async Task<bool> IsExistUserNameAsync(string userName)
         {
-            var commandText = $"select * from userdata where name=@UserName";
+            var commandText = $"select * from userdata where name = @UserName";
             var parameters = MakeParameters(("@UserName", userName));
             var updated = await ExecuteScalarAsync(commandText, parameters);
             return updated != null;
@@ -47,9 +59,9 @@ namespace NtTaskWebServer.Framework.Database
             {
                 return false;
             }
-            var hashedPassword = CryptoHelper.HashString(loginData.Password);
+            var hashedPassword = CryptoHelper.HashString(loginData.Password, _hashSalt);
             var commandText = $"select * from userdata where " +
-                $"name=@UserName and password=@Password";
+                $"name = @UserName and password = @Password";
             var parameters = MakeParameters(("@UserName", loginData.UserName), ("@Password", hashedPassword));
             var updated = await ExecuteScalarAsync(commandText, parameters);
             return updated != null;
@@ -58,7 +70,7 @@ namespace NtTaskWebServer.Framework.Database
         public async Task<LoginData> GetUserDataAsync(string name)
         {
             var commandText = "select * from userdata " +
-                $"where name=@UserName";
+                $"where name = @UserName";
             var parameters = MakeParameters(("@UserName", name));
             using var connection = new NpgsqlConnection(_connectionString);
 
@@ -66,11 +78,11 @@ namespace NtTaskWebServer.Framework.Database
 
             return await LoginDataBuilder.BuildLoginDataByDataReaderAsync(reader);
         }
-        public async Task<TaskManagerModel.Task[]> GetTaskDataAsync(string userName)
+        public async Task<Models.Task[]> GetTaskDataAsync(string userName)
         {
             var commandText = "select id,name,start_time,deadline,priority,status" +
                 " from tasks " +
-                $"where user_name=@UserName";
+                $"where user_name = @UserName";
             var parameters = MakeParameters(("@UserName", userName));
 
             using var connection = new NpgsqlConnection(_connectionString);
@@ -78,13 +90,13 @@ namespace NtTaskWebServer.Framework.Database
             var reader = await ExecuteReaderAsync(connection, commandText, parameters);
             return await TaskDataBuilder.BuildTaskDataByDataReaderAsync(reader);
         }
-        public async Task UpdateTask(TaskManagerModel.Task task)
+        public async Task UpdateTask(Models.Task task)
         {
             var commandText = "update tasks " +
-                $"set name=@TaskName, start_time=@StartTime," +
-                $"deadline=@Deadline,priority=@Priority," +
-                $" status=@Status" +
-                $"where tasks.id=@Id";
+                $"set name = @TaskName, start_time = @StartTime," +
+                $"deadline = @Deadline,priority = @Priority," +
+                $" status = @Status" +
+                $"where tasks.id = @Id";
             var tuples = new List<(string, object?)>()
             {
                 ("@TaskName", task.Name),
@@ -97,7 +109,7 @@ namespace NtTaskWebServer.Framework.Database
             var parameters = MakeParameters(tuples.ToArray());
             await ExecuteNonQueryAsync(commandText, parameters);
         }
-        public async Task<bool> WriteTaskAsync(string username, TaskManagerModel.Task taskData)
+        public async Task<bool> WriteTaskAsync(string username, Models.Task taskData)
         {
             var commandText = "insert into tasks(id,name,start_time,deadline,priority,user_name,status)" +
                 $"values (@Id,@TaskName,@StartTime," +
@@ -120,16 +132,16 @@ namespace NtTaskWebServer.Framework.Database
         public async Task<bool> RemoveTaskAsync(string userName, Guid id)
         {
             var commandText = $"delete from tasks where id = @Id" +
-                $" and user_name=@UserName";
+                $" and user_name = @UserName";
             var parameters = MakeParameters(("@Id", id), ("@UserName", userName));
             var result = await ExecuteNonQueryAsync(commandText, parameters);
             return result > 0;
         }
 
-        public async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
+        public async Task<bool> SetTaskStatusAsync(string userName, Guid id, Models.TaskStatus status)
         {
             var commandText = $"update tasks set status=@Status" +
-                $" where id=@Id and user_name=@UserName";
+                $" where id = @Id and user_name = @UserName";
             var parameters = MakeParameters(("@Status", status.ToString()), ("@UserName", userName), ("@Id", id));
             var result = await ExecuteNonQueryAsync(commandText, parameters);
             return result > 0;
@@ -179,7 +191,7 @@ namespace NtTaskWebServer.Framework.Database
         {
             var commands = new string[]
             {
-                $"delete from \"order\" where user_name = @Order and friend_name =@UserName",
+                $"delete from \"order\" where user_name = @Order and friend_name = @UserName",
                 $"insert into friends values (@UserName,@Order)",
                 $"insert into friends values (@Order,@UserName)"
             };
@@ -195,7 +207,7 @@ namespace NtTaskWebServer.Framework.Database
         public async Task<bool> HasFriendAsync(string userName, string friend)
         {
             var commandText = $"select 1 from \"friends\"" +
-                $" where user_name = @UserName and friend_name=@FriendName";
+                $" where user_name = @UserName and friend_name = @FriendName";
             var parameters = MakeParameters(("@UserName", userName), ("@FriendName", friend));
             return ExecuteScalarAsync(commandText, parameters)!=null;
         }

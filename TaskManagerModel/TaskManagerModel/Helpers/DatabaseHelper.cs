@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using TaskManagerModel;
+using Models;
 using static Npgsql.PostgresTypes.PostgresCompositeType;
 using Task = System.Threading.Tasks.Task;
 
@@ -17,7 +17,17 @@ namespace NtTaskWebServer.Framework.Helpers
 
     public static class DatabaseHelper
     {
-        private static readonly NttaskDatabaseContext databaseContext = new();
+        private static string? _connectionString;
+        private static string? _hashSalt;
+        public static void Init(string connectionString, string hashSalt)
+        {
+            _connectionString = connectionString;
+            _hashSalt = hashSalt;
+        }
+        private static readonly Lazy<NttaskDatabaseContext> lazyDatabaseContext = new Lazy<NttaskDatabaseContext>(() => new NttaskDatabaseContext(_connectionString, _hashSalt));
+
+        private static NttaskDatabaseContext databaseContext => lazyDatabaseContext.Value;
+
         public static async Task<bool> WriteLoginDataAsync(LoginData? loginData)
         {
             try
@@ -57,7 +67,7 @@ namespace NtTaskWebServer.Framework.Helpers
             }
         }
 
-        public static async Task<bool> WriteTaskAsync(string userName, TaskManagerModel.Task taskData)
+        public static async Task<bool> WriteTaskAsync(string userName, Models.Task taskData)
         {
             try
             {
@@ -69,7 +79,7 @@ namespace NtTaskWebServer.Framework.Helpers
                 return false;
             }
         }
-        public static async Task<TaskManagerModel.Task[]?> GetTaskDataAsync(string userName)
+        public static async Task<Models.Task[]?> GetTaskDataAsync(string userName)
         {
             try
             {
@@ -81,7 +91,7 @@ namespace NtTaskWebServer.Framework.Helpers
                 return null;
             }
         }
-        public static async Task UpdateTask(TaskManagerModel.Task task)
+        public static async Task UpdateTask(Models.Task task)
         {
             try
             {
@@ -105,7 +115,7 @@ namespace NtTaskWebServer.Framework.Helpers
                 return false;
             }
         }
-        public static async Task<bool> SetTaskStatusAsync(string userName, Guid id, TaskManagerModel.TaskStatus status)
+        public static async Task<bool> SetTaskStatusAsync(string userName, Guid id, Models.TaskStatus status)
         {
             try
             {

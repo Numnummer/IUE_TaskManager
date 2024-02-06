@@ -9,8 +9,8 @@ namespace NtTaskWebServer.Framework.Database
 {
     public abstract class DatabaseContext
     {
-        protected readonly string _connectionString;
-        public DatabaseContext(string connectionString)
+        protected readonly string? _connectionString;
+        public DatabaseContext(string? connectionString)
         {
             _connectionString = connectionString;
         }

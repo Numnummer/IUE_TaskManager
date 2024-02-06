@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskManagerModel
+namespace TaskManagerDomain
 {
     public interface ITaskController
     {
-        Task CreateTask(string name, DateTime deadline, uint priority);
+        Models.Task CreateTask(string name, DateTime deadline, uint priority);
         bool RemoveTaskById(Guid taskId);
-        TaskManagerModel.Task GetTaskById(Guid taskId);
+        Models.Task GetTaskById(Guid taskId);
         void UpdateAllTasks();
-        event Action<TaskManagerModel.Task> TaskUpdated;
+        event Action<Models.Task> TaskUpdated;
     }
 }

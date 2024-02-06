@@ -1,10 +1,14 @@
 ﻿using NtTaskWebServer.Framework;
+using NtTaskWebServer.Framework.Helpers;
 using System.Configuration;
 
 var app = new WebServer();
 var cts = new CancellationTokenSource();
 AppDomain.CurrentDomain.UnhandledException+=UnhandledExceptionHandler;
 
+var connectionString = ConfigurationManager.ConnectionStrings["nttask"].ConnectionString;
+var hashSalt = ConfigurationManager.AppSettings.Get("salt");
+DatabaseHelper.Init(connectionString, hashSalt);
 
 try
 {

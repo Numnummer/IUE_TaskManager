@@ -10,10 +10,9 @@ namespace NtTaskWebServer.Framework.Helpers
 {
     public static class CryptoHelper
     {
-        public static string HashString(string input)
+        public static string HashString(string input, string salt)
         {
             var encodedInput = Encoding.UTF8.GetBytes(input);
-            var salt = ConfigurationManager.AppSettings["salt"];
             var encodedSalt = Encoding.UTF8.GetBytes(salt);
             var iterationCount = 10000;
             using (var pbkdf2 = new Rfc2898DeriveBytes(encodedInput, encodedSalt, iterationCount, HashAlgorithmName.SHA256))

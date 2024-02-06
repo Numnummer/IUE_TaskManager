@@ -1,7 +1,9 @@
-﻿using NtTaskWebServer.Framework.Helpers;
+﻿using Models.Mail;
+using NtTaskWebServer.Framework.Helpers;
 using NtTaskWebServer.Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -28,7 +30,20 @@ namespace NtTaskWebServer.Controller
             if (isDataWritten && code!=null)
             {
                 await WebHelper.SendOkAsync(context, "User accepted");
-                await MailHelper.SendEmail(loginData.Email, "NtTask Registration", $"Вы зарегистрировались под именем {loginData.UserName}\nВаш код: {code}");
+                var config = new MailConfig()
+                {
+                    MailPort=ConfigurationManager.AppSettings.Get("MailPort"),
+                    MailServerUrl=ConfigurationManager.AppSettings.Get("MailServer"),
+                    Password=ConfigurationManager.AppSettings.Get("MailPassword")
+                };
+                var letter = new Letter()
+                {
+                    Body=$"Вы зарегистрировались под именем {loginData.UserName}\nВаш код: {code}",
+                    From=ConfigurationManager.AppSettings.Get("MailFrom"),
+                    Theme="NtTask Registration",
+                    To=loginData.Email
+                };
+                await MailHelper.SendEmail(config, letter);
             }
             else
             {

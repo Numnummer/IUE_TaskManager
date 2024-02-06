@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskManagerModel\TaskManagerModel.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Repository\Repository.csproj" />
+    <ProjectReference Include="..\TaskManagerModel\TaskManagerDomain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
